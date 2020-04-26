@@ -1,4 +1,4 @@
-package ch.pete.appconfig
+package ch.pete.appconfigapp
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

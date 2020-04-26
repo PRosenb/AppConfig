@@ -1,4 +1,4 @@
-package ch.pete.appconfig
+package ch.pete.appconfigapp
 
 import android.annotation.SuppressLint
 import android.os.Bundle
