@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">Test Config App</string>
+    <string name="app_name">App Configuration for QA</string>
     <string name="execute">Execute</string>
     <string name="authority">Authority</string>
     <string name="values">Values</string>
     <plurals name="success">
-        <item quantity="one">%1$sSuccess: Applied %2$d value\n</item>
-        <item quantity="other">%1$sSuccess: Applied %2$d values\n</item>
+        <item quantity="one">Success: Applied %1$d value\n</item>
+        <item quantity="other">Success: Applied %1$d values\n</item>
     </plurals>
-    <string name="failure">%1$sFailure: %2$s\n</string>
+    <string name="failure">Failure: %1$s\n</string>
 </resources>
