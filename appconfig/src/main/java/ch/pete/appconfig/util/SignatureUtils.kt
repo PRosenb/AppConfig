@@ -1,4 +1,4 @@
-package ch.pete.appconfiglibrary
+package ch.pete.appconfig.util
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -8,10 +8,13 @@ import java.security.NoSuchAlgorithmException
 import kotlin.experimental.and
 
 
-object SignatureUtils {
+internal object SignatureUtils {
     @Throws(PackageManager.NameNotFoundException::class, NoSuchAlgorithmException::class)
     fun getOwnSignatureHash(ctxt: Context): String {
-        return getSignatureHash(ctxt, ctxt.getPackageName())
+        return getSignatureHash(
+            ctxt,
+            ctxt.getPackageName()
+        )
     }
 
     @Throws(PackageManager.NameNotFoundException::class, NoSuchAlgorithmException::class)
@@ -19,7 +22,9 @@ object SignatureUtils {
         val md: MessageDigest = MessageDigest.getInstance("SHA-256")
         val sig: Signature = ctxt.getPackageManager()
             .getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures.get(0)
-        return toHexStringWithColons(md.digest(sig.toByteArray()))
+        return toHexStringWithColons(
+            md.digest(sig.toByteArray())
+        )
     }
 
     // based on https://stackoverflow.com/a/2197650/115145

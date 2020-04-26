@@ -1,4 +1,4 @@
-package ch.pete.appconfiglibrary
+package ch.pete.appconfig
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -17,6 +17,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("ch.pete.appconfiglibrary.test", appContext.packageName)
+        assertEquals("ch.pete.appconfigapp.test", appContext.packageName)
     }
 }
