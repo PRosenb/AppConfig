@@ -1,5 +1,7 @@
 package ch.pete.appconfig
 
+import android.content.ContentValues
+
 data class AuthorizedApp(val applicationId: String, val signature: String)
 
 object AppConfig {
@@ -7,6 +9,22 @@ object AppConfig {
      * Empty list allows no apps.
      */
     val authorizedApps = mutableListOf<AuthorizedApp>()
+
+    /**
+     * A listener to be called back whenever app config is received.
+     */
+    var appConfigListener: ((ContentValues) -> Int)? = null
+
+    /**
+     * Controls if the received key/values pairs are stored to shared preferences.
+     */
+    var storeValuesToSharedPreferences = true
+
+    /**
+     * Controls which keys are stored to shared preferences. See also 'storeValuesToSharedPreferences'.
+     * Empty lists allows all keys.
+     */
+    val authorizedKeys = mutableListOf<String>()
 
     init {
         authorizedApps.add(
@@ -22,9 +40,4 @@ object AppConfig {
             )
         )
     }
-
-    /**
-     * Empty lists allows all keys.
-     */
-    val authorizedKeys = mutableListOf<String>()
 }

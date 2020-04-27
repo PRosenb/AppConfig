@@ -36,27 +36,31 @@ class AppConfigContentProvider : ContentProvider() {
             }
 
             var appliedKeysCount = 0
-            values?.let {
-                val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-                val editor = prefs.edit()
-                values.keySet()
-                    .filter {
-                        if (AppConfig.authorizedKeys.isEmpty()) {
-                            true // allow all if authorizedKeys is empty
-                        } else {
-                            AppConfig.authorizedKeys.contains(it)
+            values?.let { values ->
+                appliedKeysCount = AppConfig.appConfigListener?.invoke(values) ?: 0
+
+                if (AppConfig.storeValuesToSharedPreferences) {
+                    val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+                    val editor = prefs.edit()
+                    values.keySet()
+                        .filter {
+                            if (AppConfig.authorizedKeys.isEmpty()) {
+                                true // allow all if authorizedKeys is empty
+                            } else {
+                                AppConfig.authorizedKeys.contains(it)
+                            }
                         }
-                    }
-                    .forEach { key ->
-                        val value = values.get(key)
-                        when (val dataType = value.javaClass) {
-                            String::class.java -> editor.putString(key, value as String)
-                            Boolean::class.java -> editor.putBoolean(key, value as Boolean)
-                            else -> throw IllegalArgumentException("Unsupported data type $dataType")
+                        .forEach { key ->
+                            val value = values.get(key)
+                            when (val dataType = value.javaClass) {
+                                String::class.java -> editor.putString(key, value as String)
+                                Boolean::class.java -> editor.putBoolean(key, value as Boolean)
+                                else -> throw IllegalArgumentException("Unsupported data type $dataType")
+                            }
+                            appliedKeysCount++
                         }
-                        appliedKeysCount++
-                    }
-                editor.apply()
+                    editor.apply()
+                }
             }
 
             return appliedKeysCount
