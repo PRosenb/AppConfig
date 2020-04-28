@@ -11,9 +11,9 @@ object AppConfig {
     val authorizedApps = mutableListOf<AuthorizedApp>()
 
     /**
-     * A listener to be called back whenever app config is received.
+     * A listener to be called on the main thread whenever app config is received.
      */
-    var appConfigListener: ((ContentValues) -> Int)? = null
+    var appConfigListener: ((ContentValues) -> Unit)? = null
 
     /**
      * Controls if the received key/values pairs are stored to shared preferences.

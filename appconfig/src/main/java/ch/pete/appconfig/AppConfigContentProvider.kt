@@ -5,9 +5,12 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
 import android.os.Binder
+import android.os.Handler
+import android.os.Looper
 import androidx.preference.PreferenceManager
 import ch.pete.appconfig.util.SignatureUtils
 import timber.log.Timber
+
 
 class AppConfigContentProvider : ContentProvider() {
     override fun onCreate() = true
@@ -37,7 +40,11 @@ class AppConfigContentProvider : ContentProvider() {
 
             var appliedKeysCount = 0
             values?.let { values ->
-                appliedKeysCount = AppConfig.appConfigListener?.invoke(values) ?: 0
+                AppConfig.appConfigListener?.let {
+                    Handler(Looper.getMainLooper()).post(Runnable {
+                        it(values)
+                    })
+                }
 
                 if (AppConfig.storeValuesToSharedPreferences) {
                     val prefs = PreferenceManager.getDefaultSharedPreferences(context)
