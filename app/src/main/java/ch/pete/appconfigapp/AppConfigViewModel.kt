@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ContentValues
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import timber.log.Timber
 
 class AppConfigViewModel(application: Application) : AndroidViewModel(application) {
     data class ConfigEntry(val name: String, val authority: String, val values: String)
@@ -55,6 +56,7 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
                     "Access denied"
                 )
             )
+            Timber.d("SecurityException", e)
         } catch (e: RuntimeException) {
             mainView.appendToOutput(
                 String.format(
