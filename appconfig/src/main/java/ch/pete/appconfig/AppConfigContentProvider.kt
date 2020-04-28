@@ -41,9 +41,9 @@ class AppConfigContentProvider : ContentProvider() {
             var appliedKeysCount = 0
             values?.let { values ->
                 AppConfig.appConfigListener?.let {
-                    Handler(Looper.getMainLooper()).post(Runnable {
+                    Handler(Looper.getMainLooper()).post {
                         it(values)
-                    })
+                    }
                 }
 
                 if (AppConfig.storeValuesToSharedPreferences) {

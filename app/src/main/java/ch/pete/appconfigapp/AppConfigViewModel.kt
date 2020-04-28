@@ -1,4 +1,4 @@
-package ch.pete.appconfig
+package ch.pete.appconfigapp
 
 import android.app.Application
 import android.content.ContentValues
@@ -17,14 +17,14 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun convertCommaSeparatedValuesToContentValues(valuesStr: String): ContentValues {
         val keyWithValueList = valuesStr.split(",")
-        val keyValuePairList = keyWithValueList.map {
+        val keyValuePairList = keyWithValueList.mapNotNull {
             val splitKeyValue = it.split("=")
             if (splitKeyValue.size > 1) {
                 splitKeyValue[0].trim() to splitKeyValue[1].trim()
             } else {
                 null
             }
-        }.filterNotNull()
+        }
         val contentValues = ContentValues()
         keyValuePairList.forEach {
             contentValues.put(it.first, it.second)
