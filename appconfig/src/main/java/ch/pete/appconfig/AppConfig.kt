@@ -8,22 +8,26 @@ object AppConfig {
     /**
      * Empty list allows no apps.
      */
+    @JvmStatic
     val authorizedApps = mutableListOf<AuthorizedApp>()
 
     /**
      * A listener to be called on the main thread whenever app config is received.
      */
+    @JvmStatic
     var appConfigListener: ((ContentValues) -> Unit)? = null
 
     /**
      * Controls if the received key/values pairs are stored to shared preferences.
      */
+    @JvmStatic
     var storeValuesToSharedPreferences = true
 
     /**
      * Controls which keys are stored to shared preferences. See also 'storeValuesToSharedPreferences'.
      * Empty lists allows all keys.
      */
+    @JvmStatic
     val authorizedKeys = mutableListOf<String>()
 
     init {
