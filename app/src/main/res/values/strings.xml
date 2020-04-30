@@ -3,9 +3,16 @@
     <string name="execute">Execute</string>
     <string name="authority">Authority</string>
     <string name="values">Values</string>
-    <plurals name="success">
-        <item quantity="one">Success: Applied %1$d value\n</item>
-        <item quantity="other">Success: Applied %1$d values\n</item>
+    <string name="content_description_execute">Execute</string>
+    <string name="result_title">Result:</string>
+    <plurals name="keys_count">
+        <item quantity="one">%1$d key</item>
+        <item quantity="other">%1$d keys</item>
     </plurals>
-    <string name="failure">Failure: %1$s\n</string>
+    <plurals name="result_success">
+        <item quantity="one">Success: Applied %1$d value</item>
+        <item quantity="other">Success: Applied %1$d values</item>
+    </plurals>
+    <string name="result_access_denied">Access denied.</string>
+    <string name="result_exception">Failure: %1$s</string>
 </resources>
