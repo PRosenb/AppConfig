@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import ch.pete.appconfigapp.model.ConfigEntry
+import ch.pete.appconfigapp.model.ResultType
 
 class ConfigEntryAdapter(
     private val onItemClickListener: ((ConfigEntry) -> Unit)?,
@@ -36,15 +38,15 @@ class ConfigEntryAdapter(
 
     override fun onBindViewHolder(holder: ConfigEntryViewHolder, position: Int) {
         val configEntry = getItem(position)
-        holder.title.text = configEntry.name
+        holder.title.text = configEntry.config.name
         val context = holder.keysCount.context
         holder.keysCount.text =
             context.resources.getQuantityString(
                 R.plurals.keys_count,
-                configEntry.values.size,
-                configEntry.values.size
+                configEntry.keyValues.size,
+                configEntry.keyValues.size
             )
-        holder.lastResult.text = configEntry.lastResult?.let {
+        holder.lastResult.text = configEntry.executionResults.lastOrNull()?.let {
             when (it.resultType) {
                 ResultType.SUCCESS -> {
                     // set color to default text color, same as resultTitle
@@ -91,7 +93,7 @@ class ConfigEntryAdapter(
         val DIFF_CALLBACK =
             object : DiffUtil.ItemCallback<ConfigEntry>() {
                 override fun areItemsTheSame(oldItem: ConfigEntry, newItem: ConfigEntry) =
-                    oldItem == newItem // TODO compare IDs
+                    oldItem.config.id == newItem.config.id
 
                 override fun areContentsTheSame(oldItem: ConfigEntry, newItem: ConfigEntry) =
                     oldItem == newItem

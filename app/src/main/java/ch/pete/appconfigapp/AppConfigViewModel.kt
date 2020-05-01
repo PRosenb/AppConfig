@@ -4,51 +4,80 @@ import android.app.Application
 import android.content.ContentValues
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import ch.pete.appconfigapp.db.DatabaseBuilder
+import ch.pete.appconfigapp.model.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-enum class ResultType {
-    SUCCESS, ACCESS_DENIED, EXCEPTION
-}
-
-data class Result(
-    val resultType: ResultType,
-    val valuesCount: Int = 0,
-    val message: String? = null
-)
-
-data class ConfigEntry(
-    val name: String,
-    val authority: String,
-    val values: Map<String, String>,
-    val lastResult: Result? = null
-)
 
 class AppConfigViewModel(application: Application) : AndroidViewModel(application) {
+    private val appConfigDatabase = DatabaseBuilder.builder(application).build()
+    val configEntries = appConfigDatabase.appConfigDao().getAll()
 
     lateinit var mainView: MainView
-    val configEntries = MutableLiveData<List<ConfigEntry>>()
 
-    init {
-        configEntries.value = listOf(
-            ConfigEntry(
-                name = "String 1",
-                authority = "com.trabr.provider.config",
-                values = mapOf("key0" to "value0")
-            ),
-            ConfigEntry(
-                name = "String 2",
-                authority = "com.trabr.provider.config",
-                values = mapOf("TEST_ACCESS_DENIED" to "value1", "key2" to "value2")
-            ),
-            ConfigEntry(
-                name = "String 3",
-                authority = "com.trabr.provider.config1",
-                values = mapOf("key1" to "value1", "key2" to "value2")
-            )
-        )
+    fun initViewModel() {
+        viewModelScope.launch {
+            insertTestValues()
+        }
     }
 
-    fun onButtonClicked(authority: String, values: String) {
+    private suspend fun insertTestValues() {
+        appConfigDatabase.appConfigDao().insert(
+            ConfigEntry(
+                config = Config(
+                    name = "Successful with two keys",
+                    authority = "com.trabr.provider.config"
+                ),
+                keyValues = listOf(
+                    KeyValue(
+                        key = "key0",
+                        value = "value0"
+                    ),
+                    KeyValue(
+                        key = "key1",
+                        value = "value1"
+                    )
+                ),
+                executionResults = emptyList()
+            )
+        )
+        appConfigDatabase.appConfigDao().insert(
+            ConfigEntry(
+                config = Config(
+                    name = "No access test",
+                    authority = "com.trabr.provider.config"
+                ),
+                keyValues = listOf(
+                    KeyValue(
+                        key = "TEST_ACCESS_DENIED",
+                        value = "true"
+                    )
+                ),
+                executionResults = emptyList()
+            )
+        )
+        appConfigDatabase.appConfigDao().insert(
+            ConfigEntry(
+                config = Config(
+                    name = "Wrong authority",
+                    authority = "com.trabr.provider.config1"
+                ),
+                keyValues = listOf(
+                    KeyValue(
+                        key = "key0",
+                        value = "value0"
+                    ),
+                    KeyValue(
+                        key = "key1",
+                        value = "value1"
+                    )
+                ),
+                executionResults = emptyList()
+            )
+        )
     }
 
     fun onConfigEntryClicked(configEntry: ConfigEntry) {
@@ -56,17 +85,21 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun onExecuteClicked(configEntry: ConfigEntry) {
-        callContentProviderAndShowResult(configEntry)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                callContentProviderAndShowResult(configEntry)
+            }
+        }
     }
 
-    private fun callContentProviderAndShowResult(configEntry: ConfigEntry) {
-        val contentValues = configEntry.values.entries
-            .fold(ContentValues()) { contentValues, entry ->
-                contentValues.put(entry.key, entry.value)
+    private suspend fun callContentProviderAndShowResult(configEntry: ConfigEntry) {
+        val contentValues = configEntry.keyValues
+            .fold(ContentValues()) { contentValues, keyValue ->
+                contentValues.put(keyValue.key, keyValue.value)
                 contentValues
             }
 
-        val authorityUri = Uri.parse("content://${configEntry.authority}")
+        val authorityUri = Uri.parse("content://${configEntry.config.authority}")
         try {
             val appliedValuesCount = getApplication<Application>().contentResolver.update(
                 authorityUri,
@@ -75,33 +108,35 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
                 null
             )
 
-            updateConfigEntries(
-                configEntry = configEntry,
-                result = Result(resultType = ResultType.SUCCESS, valuesCount = appliedValuesCount)
+            addExecutionResult(
+                configEntry,
+                ExecutionResult(
+                    resultType = ResultType.SUCCESS,
+                    valuesCount = appliedValuesCount
+                )
             )
         } catch (e: SecurityException) {
-            updateConfigEntries(
+            addExecutionResult(
                 configEntry = configEntry,
-                result = Result(resultType = ResultType.ACCESS_DENIED)
+                executionResult = ExecutionResult(resultType = ResultType.ACCESS_DENIED)
             )
         } catch (e: RuntimeException) {
-            updateConfigEntries(
+            addExecutionResult(
                 configEntry = configEntry,
-                result = Result(resultType = ResultType.EXCEPTION, message = e.message)
+                executionResult = ExecutionResult(
+                    resultType = ResultType.EXCEPTION,
+                    message = e.message
+                )
             )
         }
     }
 
-    private fun updateConfigEntries(configEntry: ConfigEntry, result: Result) {
-        configEntries.value = configEntries.value?.let { values ->
-            values.toMutableList().apply {
-                set(
-                    values.indexOf(configEntry),
-                    configEntry.copy(
-                        lastResult = result
-                    )
-                )
-            }
-        }
+    private suspend fun addExecutionResult(
+        configEntry: ConfigEntry,
+        executionResult: ExecutionResult
+    ) {
+        executionResult.configId =
+            configEntry.config.id ?: throw IllegalArgumentException("config.id must not be null")
+        appConfigDatabase.appConfigDao().insertExecutionResult(listOf(executionResult))
     }
 }
