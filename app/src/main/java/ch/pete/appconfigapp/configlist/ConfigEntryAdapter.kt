@@ -1,4 +1,4 @@
-package ch.pete.appconfigapp
+package ch.pete.appconfigapp.configlist
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import ch.pete.appconfigapp.R
 import ch.pete.appconfigapp.model.ConfigEntry
 import ch.pete.appconfigapp.model.ResultType
 
@@ -16,7 +17,9 @@ class ConfigEntryAdapter(
     private val onItemClickListener: ((ConfigEntry) -> Unit)?,
     private val onExecuteClickListener: ((ConfigEntry) -> Unit)?
 ) :
-    ListAdapter<ConfigEntry, ConfigEntryAdapter.ConfigEntryViewHolder>(DIFF_CALLBACK) {
+    ListAdapter<ConfigEntry, ConfigEntryAdapter.ConfigEntryViewHolder>(
+        DIFF_CALLBACK
+    ) {
 
     class ConfigEntryViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView) {
         val execute: ImageView = rootView.findViewById(R.id.execute)
@@ -33,7 +36,9 @@ class ConfigEntryAdapter(
         val rootView =
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.config_entry_list_item, parent, false)
-        return ConfigEntryViewHolder(rootView)
+        return ConfigEntryViewHolder(
+            rootView
+        )
     }
 
     override fun onBindViewHolder(holder: ConfigEntryViewHolder, position: Int) {

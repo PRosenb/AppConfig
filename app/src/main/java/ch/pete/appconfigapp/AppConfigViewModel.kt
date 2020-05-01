@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import ch.pete.appconfigapp.configlist.ConfigListView
 import ch.pete.appconfigapp.db.DatabaseBuilder
 import ch.pete.appconfigapp.model.*
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
     private val appConfigDatabase = DatabaseBuilder.builder(application).build()
     val configEntries = appConfigDatabase.appConfigDao().getAll()
 
-    lateinit var mainView: MainView
+    lateinit var configListView: ConfigListView
 
     fun initViewModel() {
         viewModelScope.launch {
