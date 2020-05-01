@@ -9,7 +9,7 @@ import ch.pete.appconfigapp.model.KeyValue
 import ch.pete.appconfigapp.model.ResultTypeConverter
 
 @Database(entities = [Config::class, KeyValue::class, ExecutionResult::class], version = 1)
-@TypeConverters(ResultTypeConverter::class)
+@TypeConverters(ResultTypeConverter::class, CalendarConverter::class)
 abstract class AppConfigDatabase : RoomDatabase() {
     abstract fun appConfigDao(): AppConfigDao
 }

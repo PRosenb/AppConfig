@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import java.util.*
 
 enum class ResultType(val id: Int) {
     SUCCESS(0), ACCESS_DENIED(1), EXCEPTION(2)
@@ -14,6 +15,7 @@ data class ExecutionResult(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
     var configId: Long? = null,
+    val timestamp: Calendar = Calendar.getInstance(),
     val resultType: ResultType,
     val valuesCount: Int = 0,
     val message: String? = null

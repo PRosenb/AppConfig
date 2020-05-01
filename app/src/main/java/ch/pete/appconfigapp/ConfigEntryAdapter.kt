@@ -46,37 +46,39 @@ class ConfigEntryAdapter(
                 configEntry.keyValues.size,
                 configEntry.keyValues.size
             )
-        holder.lastResult.text = configEntry.executionResults.lastOrNull()?.let {
-            when (it.resultType) {
-                ResultType.SUCCESS -> {
-                    // set color to default text color, same as resultTitle
-                    holder.lastResult.setTextColor(holder.resultTitle.textColors)
-                    context.resources.getQuantityString(
-                        R.plurals.result_success,
-                        it.valuesCount,
-                        it.valuesCount
-                    )
-                }
-                ResultType.ACCESS_DENIED -> {
-                    holder.lastResult.setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.failure_color
-                        )
-                    )
-                    context.getText(R.string.result_access_denied)
-                }
-                ResultType.EXCEPTION -> {
-                    holder.lastResult.setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.failure_color
-                        )
-                    )
-                    String.format(context.getString(R.string.result_exception), it.message)
-                }
-            }
-        } ?: ""
+        holder.lastResult.text =
+            configEntry.executionResults.maxBy { it.timestamp }
+                ?.let {
+                    when (it.resultType) {
+                        ResultType.SUCCESS -> {
+                            // set color to default text color, same as resultTitle
+                            holder.lastResult.setTextColor(holder.resultTitle.textColors)
+                            context.resources.getQuantityString(
+                                R.plurals.result_success,
+                                it.valuesCount,
+                                it.valuesCount
+                            )
+                        }
+                        ResultType.ACCESS_DENIED -> {
+                            holder.lastResult.setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.failure_color
+                                )
+                            )
+                            context.getText(R.string.result_access_denied)
+                        }
+                        ResultType.EXCEPTION -> {
+                            holder.lastResult.setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.failure_color
+                                )
+                            )
+                            String.format(context.getString(R.string.result_exception), it.message)
+                        }
+                    }
+                } ?: ""
         onExecuteClickListener?.let {
             holder.execute.setOnClickListener {
                 it(configEntry)
