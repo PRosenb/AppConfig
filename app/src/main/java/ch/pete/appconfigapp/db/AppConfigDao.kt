@@ -11,10 +11,18 @@ import ch.pete.appconfigapp.model.KeyValue
 interface AppConfigDao {
     @Transaction
     @Query("SELECT * FROM config")
-    fun getAll(): LiveData<List<ConfigEntry>>
+    fun fetchConfigEntries(): LiveData<List<ConfigEntry>>
 
     @Transaction
-    suspend fun insert(configEntry: ConfigEntry) {
+    @Query("SELECT * FROM config WHERE config.id = :configId")
+    fun fetchConfigEntryById(configId: Long): LiveData<ConfigEntry>
+
+    @Transaction
+    @Query("SELECT * FROM execution_result WHERE execution_result.configId = :configId ORDER BY timestamp DESC")
+    fun fetchExecutionResultEntriesByConfigId(configId: Long): LiveData<List<ExecutionResult>>
+
+    @Transaction
+    suspend fun insertConfigEntry(configEntry: ConfigEntry) {
         val configId = insertConfig(configEntry.config)
 
         // https://issuetracker.google.com/issues/62848977
@@ -26,7 +34,7 @@ interface AppConfigDao {
     }
 
     @Transaction
-    suspend fun delete(configEntry: ConfigEntry) {
+    suspend fun deleteConfigEntry(configEntry: ConfigEntry) {
         deleteConfig(configEntry.config)
         deleteKeyValues(configEntry.keyValues)
         deleteExecutionResults(configEntry.executionResults)

@@ -47,11 +47,11 @@ data class ConfigEntry(
         parentColumn = "id",
         entityColumn = "configId"
     )
-    val keyValues: List<KeyValue>,
+    val keyValues: List<KeyValue> = emptyList(),
 
     @Relation(
         parentColumn = "id",
         entityColumn = "configId"
     )
-    val executionResults: List<ExecutionResult>
+    val executionResults: List<ExecutionResult> = emptyList()
 )

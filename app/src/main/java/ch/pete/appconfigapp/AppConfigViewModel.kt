@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.ContentValues
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import ch.pete.appconfigapp.configdetail.ConfigDetailView
 import ch.pete.appconfigapp.configlist.ConfigListView
 import ch.pete.appconfigapp.db.DatabaseBuilder
 import ch.pete.appconfigapp.model.*
@@ -15,9 +17,13 @@ import kotlinx.coroutines.withContext
 
 class AppConfigViewModel(application: Application) : AndroidViewModel(application) {
     private val appConfigDatabase = DatabaseBuilder.builder(application).build()
-    val configEntries = appConfigDatabase.appConfigDao().getAll()
+    private val appConfigDao = appConfigDatabase.appConfigDao()
 
+    val configEntries = appConfigDao.fetchConfigEntries()
+
+    lateinit var mainView: MainView
     lateinit var configListView: ConfigListView
+    lateinit var configDetailView: ConfigDetailView
 
     fun initViewModel() {
         viewModelScope.launch {
@@ -25,8 +31,23 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun configEntryById(configId: Long?): LiveData<ConfigEntry>? {
+        return configId?.let {
+            appConfigDao.fetchConfigEntryById(configId)
+        }
+    }
+
+    fun executionResultEntriesByConfigId(configId: Long) =
+        appConfigDao.fetchExecutionResultEntriesByConfigId(configId)
+
+    fun updateConfigEntry(config: Config) {
+        viewModelScope.launch {
+            appConfigDao.updateConfig(config)
+        }
+    }
+
     private suspend fun insertTestValues() {
-        appConfigDatabase.appConfigDao().insert(
+        appConfigDao.insertConfigEntry(
             ConfigEntry(
                 config = Config(
                     name = "Successful with two keys",
@@ -45,7 +66,7 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
                 executionResults = emptyList()
             )
         )
-        appConfigDatabase.appConfigDao().insert(
+        appConfigDao.insertConfigEntry(
             ConfigEntry(
                 config = Config(
                     name = "No access test",
@@ -60,7 +81,7 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
                 executionResults = emptyList()
             )
         )
-        appConfigDatabase.appConfigDao().insert(
+        appConfigDao.insertConfigEntry(
             ConfigEntry(
                 config = Config(
                     name = "Wrong authority",
@@ -82,7 +103,9 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun onConfigEntryClicked(configEntry: ConfigEntry) {
-
+        configEntry.config.id?.let {
+            mainView.showDetails(it)
+        } ?: throw IllegalArgumentException("config.id is null")
     }
 
     fun onExecuteClicked(configEntry: ConfigEntry) {
@@ -91,6 +114,18 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
                 callContentProviderAndShowResult(configEntry)
             }
         }
+    }
+
+    fun onDetailExecuteClicked(configEntry: ConfigEntry) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                callContentProviderAndShowResult(configEntry)
+            }
+        }
+    }
+
+    fun onExectionResultEntryClicked(executionResult: ExecutionResult) {
+
     }
 
     private suspend fun callContentProviderAndShowResult(configEntry: ConfigEntry) {

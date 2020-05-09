@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/configListFragment"
+        android:id="@+id/fragmentContainer"
         android:name="ch.pete.appconfigapp.configlist.ConfigListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
