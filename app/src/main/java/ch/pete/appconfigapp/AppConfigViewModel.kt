@@ -127,6 +127,10 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun onAddKeyValueClicked(configId: Long) {
+
+    }
+
     fun onExecutionResultEntryClicked(executionResult: ExecutionResult) {
 
     }

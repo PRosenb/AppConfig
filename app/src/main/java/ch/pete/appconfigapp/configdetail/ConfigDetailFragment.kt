@@ -71,6 +71,10 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
 
             initExecutionResultView(configId, rootView)
             initKeyValuesView(configId, rootView)
+
+            rootView.addKeyValueButton.setOnClickListener {
+                viewModel.onAddKeyValueClicked(configId)
+            }
         }
 
         return rootView

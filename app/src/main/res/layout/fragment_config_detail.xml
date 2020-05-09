@@ -48,13 +48,23 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/divierBetweenKeyValuesAndExecutionResults"
+        app:layout_constraintBottom_toBottomOf="@id/dividerBetweenKeyValuesAndExecutionResults"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/horizontalDivider" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addKeyValueButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@id/dividerBetweenKeyValuesAndExecutionResults"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_plus_circle_outline" />
+
     <View
-        android:id="@+id/divierBetweenKeyValuesAndExecutionResults"
+        android:id="@+id/dividerBetweenKeyValuesAndExecutionResults"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@android:color/black"
@@ -69,6 +79,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divierBetweenKeyValuesAndExecutionResults" />
+        app:layout_constraintTop_toBottomOf="@id/dividerBetweenKeyValuesAndExecutionResults" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
