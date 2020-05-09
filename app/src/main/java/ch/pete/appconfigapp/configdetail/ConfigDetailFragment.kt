@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ch.pete.appconfigapp.AppConfigViewModel
 import ch.pete.appconfigapp.R
 import ch.pete.appconfigapp.model.ConfigEntry
@@ -80,7 +81,14 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
             onItemClickListener = {
                 viewModel.onExecutionResultEntryClicked(it)
             }
-        )
+        ).apply {
+            registerAdapterDataObserver(
+                object : RecyclerView.AdapterDataObserver() {
+                    override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                        rootView.executionResults.layoutManager?.scrollToPosition(0)
+                    }
+                })
+        }
         viewModel.executionResultEntriesByConfigId(configId)
             .observe(viewLifecycleOwner, Observer {
                 executionResultAdapter.submitList(it)
