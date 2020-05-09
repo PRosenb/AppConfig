@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.fragment_config_detail.view.*
 class ConfigDetailFragment : Fragment(), ConfigDetailView {
     companion object {
         private const val PREF_AUTHORITY = "authority"
-        private const val PREF_VALUES = "values"
         const val ARG_CONFIG_ENTRY_ID = "ARG_CONFIG_ENTRY_ID"
     }
 
@@ -66,10 +65,11 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
                     configEntry = loadedConfigEntry
                     name.setText(loadedConfigEntry.config.name)
                     authority.setText(loadedConfigEntry.config.authority)
-                    values.setText(loadedConfigEntry.keyValues.joinToString(",") { "${it.key}=${it.value}" })
                 })
             // TODO handle not found
+
             initExecutionResultView(configId, rootView)
+            initKeyValuesView(configId, rootView)
         }
 
         return rootView
@@ -78,7 +78,7 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
     private fun initExecutionResultView(configId: Long, rootView: View) {
         val executionResultAdapter = ExecutionResultAdapter(
             onItemClickListener = {
-                viewModel.onExectionResultEntryClicked(it)
+                viewModel.onExecutionResultEntryClicked(it)
             }
         )
         viewModel.executionResultEntriesByConfigId(configId)
@@ -97,6 +97,28 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
         }
     }
 
+    private fun initKeyValuesView(configId: Long, rootView: View) {
+        val adapter = KeyValueAdapter(
+            onItemClickListener = {
+                viewModel.onKeyValueEntryClicked(it)
+            }
+        )
+        viewModel.keyValueEntriesByConfigId(configId)
+            .observe(viewLifecycleOwner, Observer {
+                adapter.submitList(it)
+            })
+        rootView.keyValues.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(activity)
+            val dividerItemDecoration = DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+            addItemDecoration(dividerItemDecoration)
+            this.adapter = adapter
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         loadUiValues()
@@ -111,7 +133,6 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = prefs.edit()
         editor.putString(PREF_AUTHORITY, authority.text.toString())
-        editor.putString(PREF_VALUES, values.text.toString())
         editor.apply()
     }
 
@@ -119,9 +140,6 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         prefs.getString(PREF_AUTHORITY, null)?.let {
             authority.setText(it)
-        }
-        prefs.getString(PREF_VALUES, null)?.let {
-            values.setText(it)
         }
     }
 }

@@ -40,6 +40,9 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
     fun executionResultEntriesByConfigId(configId: Long) =
         appConfigDao.fetchExecutionResultEntriesByConfigId(configId)
 
+    fun keyValueEntriesByConfigId(configId: Long) =
+        appConfigDao.keyValueEntriesByConfigId(configId)
+
     fun updateConfigEntry(config: Config) {
         viewModelScope.launch {
             appConfigDao.updateConfig(config)
@@ -124,7 +127,11 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun onExectionResultEntryClicked(executionResult: ExecutionResult) {
+    fun onExecutionResultEntryClicked(executionResult: ExecutionResult) {
+
+    }
+
+    fun onKeyValueEntryClicked(keyValue: KeyValue) {
 
     }
 

@@ -18,8 +18,12 @@ interface AppConfigDao {
     fun fetchConfigEntryById(configId: Long): LiveData<ConfigEntry>
 
     @Transaction
-    @Query("SELECT * FROM execution_result WHERE execution_result.configId = :configId ORDER BY timestamp DESC")
+    @Query("SELECT * FROM execution_result WHERE configId = :configId ORDER BY timestamp DESC")
     fun fetchExecutionResultEntriesByConfigId(configId: Long): LiveData<List<ExecutionResult>>
+
+    @Transaction
+    @Query("SELECT * FROM key_value WHERE configId = :configId ORDER BY `key`")
+    fun keyValueEntriesByConfigId(configId: Long): LiveData<List<KeyValue>>
 
     @Transaction
     suspend fun insertConfigEntry(configEntry: ConfigEntry) {

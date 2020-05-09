@@ -25,15 +25,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name" />
 
-    <EditText
-        android:id="@+id/values"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/values"
-        android:inputType="text"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/authority" />
-
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
@@ -41,16 +32,34 @@
         android:padding="5dp"
         android:text="@string/execute"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/values" />
+        app:layout_constraintTop_toBottomOf="@id/authority" />
 
     <View
         android:id="@+id/horizontalDivider"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="#c0c0c0"
+        android:background="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/keyValues"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/divierBetweenKeyValuesAndExecutionResults"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontalDivider" />
+
+    <View
+        android:id="@+id/divierBetweenKeyValuesAndExecutionResults"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontalDivider" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/executionResults"
@@ -60,6 +69,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/horizontalDivider" />
+        app:layout_constraintTop_toBottomOf="@id/divierBetweenKeyValuesAndExecutionResults" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
