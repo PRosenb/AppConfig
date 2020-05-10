@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.pete.appconfigapp.AppConfigViewModel
 import ch.pete.appconfigapp.R
-import kotlinx.android.synthetic.main.fragment_config_list.view.*
+import kotlinx.android.synthetic.main.fragment_config_list.view.addConfigButton
+import kotlinx.android.synthetic.main.fragment_config_list.view.recyclerView
 
+@Suppress("unused")
 class ConfigListFragment : Fragment(), ConfigListView {
     private val viewModel: AppConfigViewModel by activityViewModels()
 

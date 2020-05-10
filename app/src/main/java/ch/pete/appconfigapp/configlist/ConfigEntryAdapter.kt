@@ -1,5 +1,6 @@
 package ch.pete.appconfigapp.configlist
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,14 @@ import ch.pete.appconfigapp.model.ConfigEntry
 import ch.pete.appconfigapp.model.ResultType
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
-import kotlinx.android.synthetic.main.config_entry_list_item.view.*
+import kotlinx.android.synthetic.main.config_entry_list_item.view.delete
+import kotlinx.android.synthetic.main.config_entry_list_item.view.execute
+import kotlinx.android.synthetic.main.config_entry_list_item.view.keysCount
+import kotlinx.android.synthetic.main.config_entry_list_item.view.lastResult
+import kotlinx.android.synthetic.main.config_entry_list_item.view.mainLayout
+import kotlinx.android.synthetic.main.config_entry_list_item.view.resultTitle
+import kotlinx.android.synthetic.main.config_entry_list_item.view.swipeLayout
+import kotlinx.android.synthetic.main.config_entry_list_item.view.title
 
 
 class ConfigEntryAdapter(
@@ -63,39 +71,8 @@ class ConfigEntryAdapter(
                 configEntry.keyValues.size,
                 configEntry.keyValues.size
             )
-        holder.lastResult.text =
-            configEntry.executionResults.maxBy { it.timestamp }
-                ?.let {
-                    when (it.resultType) {
-                        ResultType.SUCCESS -> {
-                            // set color to default text color, same as resultTitle
-                            holder.lastResult.setTextColor(holder.resultTitle.textColors)
-                            context.resources.getQuantityString(
-                                R.plurals.result_success,
-                                it.valuesCount,
-                                it.valuesCount
-                            )
-                        }
-                        ResultType.ACCESS_DENIED -> {
-                            holder.lastResult.setTextColor(
-                                ContextCompat.getColor(
-                                    context,
-                                    R.color.failure_color
-                                )
-                            )
-                            context.getText(R.string.result_access_denied)
-                        }
-                        ResultType.EXCEPTION -> {
-                            holder.lastResult.setTextColor(
-                                ContextCompat.getColor(
-                                    context,
-                                    R.color.failure_color
-                                )
-                            )
-                            String.format(context.getString(R.string.result_exception), it.message)
-                        }
-                    }
-                } ?: ""
+        showLastResult(configEntry, holder, context)
+
         onExecuteClickListener?.let {
             holder.execute.setOnClickListener {
                 it(configEntry)
@@ -115,6 +92,44 @@ class ConfigEntryAdapter(
                 it(configEntry)
             }
         }
+    }
+
+    private fun showLastResult(
+        configEntry: ConfigEntry, holder: ConfigEntryViewHolder,
+        context: Context
+    ) {
+        holder.lastResult.text = configEntry.executionResults.maxBy { it.timestamp }
+            ?.let {
+                when (it.resultType) {
+                    ResultType.SUCCESS -> {
+                        // set color to default text color, same as resultTitle
+                        holder.lastResult.setTextColor(holder.resultTitle.textColors)
+                        context.resources.getQuantityString(
+                            R.plurals.result_success,
+                            it.valuesCount,
+                            it.valuesCount
+                        )
+                    }
+                    ResultType.ACCESS_DENIED -> {
+                        holder.lastResult.setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.failure_color
+                            )
+                        )
+                        context.getText(R.string.result_access_denied)
+                    }
+                    ResultType.EXCEPTION -> {
+                        holder.lastResult.setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.failure_color
+                            )
+                        )
+                        String.format(context.getString(R.string.result_exception), it.message)
+                    }
+                }
+            } ?: ""
     }
 
     companion object {

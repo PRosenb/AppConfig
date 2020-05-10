@@ -10,7 +10,11 @@ import androidx.lifecycle.viewModelScope
 import ch.pete.appconfigapp.configdetail.ConfigDetailView
 import ch.pete.appconfigapp.configlist.ConfigListView
 import ch.pete.appconfigapp.db.DatabaseBuilder
-import ch.pete.appconfigapp.model.*
+import ch.pete.appconfigapp.model.Config
+import ch.pete.appconfigapp.model.ConfigEntry
+import ch.pete.appconfigapp.model.ExecutionResult
+import ch.pete.appconfigapp.model.KeyValue
+import ch.pete.appconfigapp.model.ResultType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -122,10 +126,7 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun onExecutionResultEntryClicked(executionResult: ExecutionResult) {
-
-    }
-
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun callContentProviderAndShowResult(configEntry: ConfigEntry) {
         val contentValues = configEntry.keyValues
             .fold(ContentValues()) { contentValues, keyValue ->

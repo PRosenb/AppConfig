@@ -14,8 +14,14 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.pete.appconfigapp.AppConfigViewModel
 import ch.pete.appconfigapp.R
 import ch.pete.appconfigapp.model.Config
-import kotlinx.android.synthetic.main.fragment_config_detail.*
-import kotlinx.android.synthetic.main.fragment_config_detail.view.*
+import kotlinx.android.synthetic.main.fragment_config_detail.authority
+import kotlinx.android.synthetic.main.fragment_config_detail.name
+import kotlinx.android.synthetic.main.fragment_config_detail.view.addKeyValueButton
+import kotlinx.android.synthetic.main.fragment_config_detail.view.authority
+import kotlinx.android.synthetic.main.fragment_config_detail.view.execute
+import kotlinx.android.synthetic.main.fragment_config_detail.view.executionResults
+import kotlinx.android.synthetic.main.fragment_config_detail.view.keyValues
+import kotlinx.android.synthetic.main.fragment_config_detail.view.name
 
 class ConfigDetailFragment : Fragment(), ConfigDetailView {
     companion object {
@@ -82,9 +88,7 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
 
     private fun initExecutionResultView(configId: Long, rootView: View) {
         val executionResultAdapter = ExecutionResultAdapter(
-            onItemClickListener = {
-                viewModel.onExecutionResultEntryClicked(it)
-            }
+            onItemClickListener = null
         ).apply {
             registerAdapterDataObserver(
                 object : RecyclerView.AdapterDataObserver() {
