@@ -12,21 +12,28 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.pete.appconfigapp.R
 import ch.pete.appconfigapp.model.ConfigEntry
 import ch.pete.appconfigapp.model.ResultType
+import com.chauthai.swipereveallayout.ViewBinderHelper
+import kotlinx.android.synthetic.main.config_entry_list_item.view.*
+
 
 class ConfigEntryAdapter(
     private val onItemClickListener: ((ConfigEntry) -> Unit)?,
-    private val onExecuteClickListener: ((ConfigEntry) -> Unit)?
+    private val onExecuteClickListener: ((ConfigEntry) -> Unit)?,
+    private val onDeleteClickListener: ((ConfigEntry) -> Unit)?
 ) :
     ListAdapter<ConfigEntry, ConfigEntryAdapter.ConfigEntryViewHolder>(
         DIFF_CALLBACK
     ) {
+    private val viewBinderHelper = ViewBinderHelper()
 
     class ConfigEntryViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView) {
-        val execute: ImageView = rootView.findViewById(R.id.execute)
-        val title: TextView = rootView.findViewById(R.id.title)
-        val keysCount: TextView = rootView.findViewById(R.id.keysCount)
-        val resultTitle: TextView = rootView.findViewById(R.id.resultTitle)
-        val lastResult: TextView = rootView.findViewById(R.id.lastResult)
+        val swipeLayout = rootView.swipeLayout
+        val delete = rootView.delete
+        val execute: ImageView = rootView.execute
+        val title: TextView = rootView.title
+        val keysCount: TextView = rootView.keysCount
+        val resultTitle: TextView = rootView.resultTitle
+        val lastResult: TextView = rootView.lastResult
     }
 
     override fun onCreateViewHolder(
@@ -43,6 +50,7 @@ class ConfigEntryAdapter(
 
     override fun onBindViewHolder(holder: ConfigEntryViewHolder, position: Int) {
         val configEntry = getItem(position)
+
         holder.title.text = configEntry.config.name
         val context = holder.keysCount.context
         holder.keysCount.text =
@@ -91,6 +99,15 @@ class ConfigEntryAdapter(
         }
         onItemClickListener?.let {
             holder.itemView.setOnClickListener {
+                it(configEntry)
+            }
+        }
+
+        viewBinderHelper.setOpenOnlyOne(true);
+        viewBinderHelper.bind(holder.swipeLayout, configEntry.config.id.toString());
+        viewBinderHelper.closeLayout(configEntry.config.id.toString())
+        onDeleteClickListener?.let {
+            holder.delete.setOnClickListener {
                 it(configEntry)
             }
         }

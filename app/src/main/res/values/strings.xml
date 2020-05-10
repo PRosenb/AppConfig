@@ -6,6 +6,7 @@
     <string name="values">Values</string>
     <string name="content_description_execute">Execute</string>
     <string name="result_title">Result:</string>
+    <string name="delete">DELETE</string>
     <plurals name="keys_count">
         <item quantity="one">%1$d key</item>
         <item quantity="other">%1$d keys</item>

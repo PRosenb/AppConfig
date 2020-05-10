@@ -55,6 +55,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 
     kapt 'androidx.room:room-compiler:2.2.5'
 

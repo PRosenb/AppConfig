@@ -33,6 +33,9 @@ class ConfigListFragment : Fragment(), ConfigListView {
             },
             onItemClickListener = {
                 viewModel.onConfigEntryClicked(it)
+            },
+            onDeleteClickListener = {
+                viewModel.onConfigEntryDeleteClicked(it)
             }
         )
         viewModel.configEntries.observe(viewLifecycleOwner, Observer {

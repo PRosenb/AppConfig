@@ -70,6 +70,12 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         } ?: throw IllegalArgumentException("config.id is null")
     }
 
+    fun onConfigEntryDeleteClicked(configEntry: ConfigEntry) {
+        viewModelScope.launch {
+            appConfigDao.deleteConfigEntry(configEntry)
+        }
+    }
+
     fun onExecuteClicked(configEntry: ConfigEntry) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

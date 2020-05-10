@@ -1,63 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.chauthai.swipereveallayout.SwipeRevealLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/swipeLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground">
+    app:dragEdge="right"
+    app:mode="same_level">
 
-    <TextView
-        android:id="@+id/title"
+    <!--Swipe Layout-->
+    <LinearLayout
         android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/delete"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/holo_red_light"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="@string/delete"
+            android:textColor="@android:color/white"
+            tool:targetApi="m" />
+    </LinearLayout>
+
+    <!--Main Layout-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/execute"
-        app:layout_constraintTop_toTopOf="parent"
-        tool:text="Dev1 Environment" />
+        android:background="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/keysCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tool:text="2 keys" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/execute"
+            app:layout_constraintTop_toTopOf="parent"
+            tool:text="Dev1 Environment" />
 
-    <TextView
-        android:id="@+id/resultTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/result_title"
-        app:layout_constraintStart_toEndOf="@+id/execute"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        <TextView
+            android:id="@+id/keysCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tool:text="2 keys" />
 
-    <TextView
-        android:id="@+id/lastResult"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/resultTitle"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        tool:text="Success: Applied 2 values" />
+        <TextView
+            android:id="@+id/resultTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/result_title"
+            app:layout_constraintStart_toEndOf="@+id/execute"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
-    <ImageView
-        android:id="@+id/execute"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:contentDescription="@string/content_description_execute"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_playback_play" />
+        <TextView
+            android:id="@+id/lastResult"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resultTitle"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            tool:text="Success: Applied 2 values" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/execute"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/content_description_execute"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_playback_play" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.chauthai.swipereveallayout.SwipeRevealLayout>
