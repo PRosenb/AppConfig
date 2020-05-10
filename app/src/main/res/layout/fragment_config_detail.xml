@@ -21,9 +21,26 @@
         android:layout_height="wrap_content"
         android:hint="@string/authority"
         android:inputType="textUri"
-        android:text="com.trabr.provider.config"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name" />
+
+    <View
+        android:id="@+id/dividerBetweenAuthorityAndKeyValues"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@id/keyValues"
+        app:layout_constraintTop_toBottomOf="@id/authority" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/keyValues"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/execute"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authority" />
 
     <Button
         android:id="@+id/execute"
@@ -31,27 +48,8 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:text="@string/execute"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/authority" />
-
-    <View
-        android:id="@+id/horizontalDivider"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@android:color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/execute" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/keyValues"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/dividerBetweenKeyValuesAndExecutionResults"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/horizontalDivider" />
+        app:layout_constraintBottom_toTopOf="@+id/executionResults"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addKeyValueButton"
@@ -65,10 +63,10 @@
     <View
         android:id="@+id/dividerBetweenKeyValuesAndExecutionResults"
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="2dp"
         android:background="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/horizontalDivider" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/executionResults"
