@@ -20,4 +20,5 @@
     <string name="key_value">Key/Value</string>
     <string name="key">Key</string>
     <string name="value">Value</string>
+    <string name="error_occurred">An error occurred, please try again.</string>
 </resources>
