@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b7102abadc85c9dd3c8febbaa44e079f",
+    "identityHash": "241bd6a0821281d1e930d3c9d65a6a7f",
     "entities": [
       {
         "tableName": "config",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "key_value",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `configId` INTEGER, `key` TEXT NOT NULL, `value` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `configId` INTEGER NOT NULL, `key` TEXT NOT NULL, `value` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -50,7 +50,7 @@
             "fieldPath": "configId",
             "columnName": "configId",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "key",
@@ -76,7 +76,7 @@
       },
       {
         "tableName": "execution_result",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `configId` INTEGER, `timestamp` TEXT NOT NULL, `resultType` INTEGER NOT NULL, `valuesCount` INTEGER NOT NULL, `message` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `configId` INTEGER NOT NULL, `timestamp` TEXT NOT NULL, `resultType` INTEGER NOT NULL, `valuesCount` INTEGER NOT NULL, `message` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -88,7 +88,7 @@
             "fieldPath": "configId",
             "columnName": "configId",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "timestamp",
@@ -128,7 +128,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b7102abadc85c9dd3c8febbaa44e079f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '241bd6a0821281d1e930d3c9d65a6a7f')"
     ]
   }
 }

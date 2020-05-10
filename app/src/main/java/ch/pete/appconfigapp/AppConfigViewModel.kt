@@ -25,12 +25,6 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
     lateinit var configListView: ConfigListView
     lateinit var configDetailView: ConfigDetailView
 
-    fun initViewModel() {
-        viewModelScope.launch {
-            insertTestValues()
-        }
-    }
-
     fun configEntryById(configId: Long?): LiveData<ConfigEntry>? {
         return configId?.let {
             appConfigDao.fetchConfigEntryByIdAsLiveData(configId)
@@ -46,6 +40,9 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
     fun keyValueEntriesByConfigId(configId: Long) =
         appConfigDao.keyValueEntriesByConfigId(configId)
 
+    fun keyValueEntryByKeyValueId(keyValueId: Long) =
+        appConfigDao.keyValueEntryByKeyValueId(keyValueId)
+
     fun onNameUpdated(name: String, configId: Long) {
         viewModelScope.launch {
             appConfigDao.updateConfigName(name, configId)
@@ -58,66 +55,10 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private suspend fun insertTestValues() {
-        appConfigDao.insertConfigEntry(
-            ConfigEntry(
-                config = Config(
-                    name = "Successful with two keys",
-                    authority = "com.trabr.provider.config"
-                ),
-                keyValues = listOf(
-                    KeyValue(
-                        key = "key0",
-                        value = "value0"
-                    ),
-                    KeyValue(
-                        key = "key1",
-                        value = "value1"
-                    )
-                ),
-                executionResults = emptyList()
-            )
-        )
-        appConfigDao.insertConfigEntry(
-            ConfigEntry(
-                config = Config(
-                    name = "No access test",
-                    authority = "com.trabr.provider.config"
-                ),
-                keyValues = listOf(
-                    KeyValue(
-                        key = "TEST_ACCESS_DENIED",
-                        value = "true"
-                    )
-                ),
-                executionResults = emptyList()
-            )
-        )
-        appConfigDao.insertConfigEntry(
-            ConfigEntry(
-                config = Config(
-                    name = "Wrong authority",
-                    authority = "com.trabr.provider.config1"
-                ),
-                keyValues = listOf(
-                    KeyValue(
-                        key = "key0",
-                        value = "value0"
-                    ),
-                    KeyValue(
-                        key = "key1",
-                        value = "value1"
-                    )
-                ),
-                executionResults = emptyList()
-            )
-        )
-    }
-
     fun onAddConfigClicked() {
         viewModelScope.launch {
             val configId = withContext(Dispatchers.IO) {
-                appConfigDao.insertConfig(Config(name = "", authority = ""))
+                appConfigDao.insertEmptyConfig()
             }
             mainView.showDetails(configId)
         }
@@ -151,14 +92,24 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun onAddKeyValueClicked(configId: Long) {
-
-    }
-
-    fun onExecutionResultEntryClicked(executionResult: ExecutionResult) {
-
+        configDetailView.showKeyValueDetails(configId, null)
     }
 
     fun onKeyValueEntryClicked(keyValue: KeyValue) {
+        configDetailView.showKeyValueDetails(keyValue.configId, keyValue.id)
+    }
+
+    fun storeKeyValue(keyValue: KeyValue) {
+        viewModelScope.launch {
+            if (keyValue.id == null) {
+                appConfigDao.insertKeyValue(keyValue)
+            } else {
+                appConfigDao.updateKeyValue(keyValue)
+            }
+        }
+    }
+
+    fun onExecutionResultEntryClicked(executionResult: ExecutionResult) {
 
     }
 
@@ -180,33 +131,36 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
 
             addExecutionResult(
                 configEntry,
-                ExecutionResult(
-                    resultType = ResultType.SUCCESS,
-                    valuesCount = appliedValuesCount
-                )
+                resultType = ResultType.SUCCESS,
+                valuesCount = appliedValuesCount
             )
         } catch (e: SecurityException) {
             addExecutionResult(
                 configEntry = configEntry,
-                executionResult = ExecutionResult(resultType = ResultType.ACCESS_DENIED)
+                resultType = ResultType.ACCESS_DENIED
             )
         } catch (e: RuntimeException) {
             addExecutionResult(
                 configEntry = configEntry,
-                executionResult = ExecutionResult(
-                    resultType = ResultType.EXCEPTION,
-                    message = e.message
-                )
+                resultType = ResultType.EXCEPTION,
+                message = e.message
             )
         }
     }
 
     private suspend fun addExecutionResult(
         configEntry: ConfigEntry,
-        executionResult: ExecutionResult
+        resultType: ResultType,
+        valuesCount: Int = 0,
+        message: String? = null
     ) {
-        executionResult.configId =
-            configEntry.config.id ?: throw IllegalArgumentException("config.id must not be null")
+        val executionResult = ExecutionResult(
+            configId = configEntry.config.id
+                ?: throw IllegalArgumentException("config.id must not be null"),
+            resultType = resultType,
+            valuesCount = valuesCount,
+            message = message
+        )
         appConfigDatabase.appConfigDao().insertExecutionResult(listOf(executionResult))
     }
 }

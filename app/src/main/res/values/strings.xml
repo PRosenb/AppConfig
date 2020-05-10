@@ -16,4 +16,8 @@
     </plurals>
     <string name="result_access_denied">Access denied.</string>
     <string name="result_exception">Failure: %1$s</string>
+
+    <string name="key_value">Key/Value</string>
+    <string name="key">Key</string>
+    <string name="value">Value</string>
 </resources>

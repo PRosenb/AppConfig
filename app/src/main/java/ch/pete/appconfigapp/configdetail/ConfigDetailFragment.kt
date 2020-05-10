@@ -130,4 +130,13 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
             this.adapter = adapter
         }
     }
+
+    override fun showKeyValueDetails(configId: Long, keyValueId: Long?) {
+        val keyValueDialogFragment = KeyValueDialogFragment()
+        val args = Bundle()
+        args.putLong(KeyValueDialogFragment.ARG_CONFIG_ID, configId)
+        keyValueId?.let { args.putLong(KeyValueDialogFragment.ARG_KEY_VALUE_ID, it) }
+        keyValueDialogFragment.arguments = args
+        keyValueDialogFragment.show(parentFragmentManager, "keyValueDialogFragment")
+    }
 }

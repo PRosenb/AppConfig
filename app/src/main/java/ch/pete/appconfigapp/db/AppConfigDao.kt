@@ -28,21 +28,11 @@ interface AppConfigDao {
     @Query("SELECT * FROM execution_result WHERE configId = :configId ORDER BY timestamp DESC")
     fun fetchExecutionResultEntriesByConfigId(configId: Long): LiveData<List<ExecutionResult>>
 
-    @Transaction
     @Query("SELECT * FROM key_value WHERE configId = :configId ORDER BY `key`")
     fun keyValueEntriesByConfigId(configId: Long): LiveData<List<KeyValue>>
 
-    @Transaction
-    suspend fun insertConfigEntry(configEntry: ConfigEntry) {
-        val configId = insertConfig(configEntry.config)
-
-        // https://issuetracker.google.com/issues/62848977
-        configEntry.keyValues.forEach { it.configId = configId }
-        configEntry.executionResults.forEach { it.configId = configId }
-
-        insertKeyValues(configEntry.keyValues)
-        insertExecutionResult(configEntry.executionResults)
-    }
+    @Query("SELECT * FROM key_value WHERE id = :keyValueId")
+    fun keyValueEntryByKeyValueId(keyValueId: Long): LiveData<KeyValue>
 
     @Transaction
     suspend fun deleteConfigEntry(configEntry: ConfigEntry) {
@@ -51,11 +41,14 @@ interface AppConfigDao {
         deleteExecutionResults(configEntry.executionResults)
     }
 
+    @Query("INSERT INTO config (name, authority) VALUES ('','')")
+    suspend fun insertEmptyConfig(): Long
+
     @Insert
     suspend fun insertConfig(config: Config): Long
 
     @Insert
-    suspend fun insertKeyValues(keyValues: List<KeyValue>)
+    suspend fun insertKeyValue(keyValue: KeyValue): Long
 
     @Insert
     suspend fun insertExecutionResult(executionResults: List<ExecutionResult>)
@@ -67,7 +60,7 @@ interface AppConfigDao {
     suspend fun updateConfigAuthority(authority: String, configId: Long)
 
     @Update
-    suspend fun updateKeyValues(keyValues: List<KeyValue>): Int
+    suspend fun updateKeyValue(keyValue: KeyValue): Int
 
     @Update
     suspend fun updateExecutionResult(executionResults: List<ExecutionResult>): Int
