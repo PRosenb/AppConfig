@@ -25,12 +25,6 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
     lateinit var configListView: ConfigListView
     lateinit var configDetailView: ConfigDetailView
 
-    fun configEntryById(configId: Long?): LiveData<ConfigEntry>? {
-        return configId?.let {
-            appConfigDao.fetchConfigEntryByIdAsLiveData(configId)
-        }
-    }
-
     fun configById(configId: Long): LiveData<Config> =
         appConfigDao.fetchConfigById(configId)
 

@@ -10,9 +10,9 @@ import kotlin.experimental.and
 
 internal object SignatureUtils {
     @Throws(PackageManager.NameNotFoundException::class, NoSuchAlgorithmException::class)
-    fun getSignatureHash(ctxt: Context, packageName: String?): String {
+    fun getSignatureHash(context: Context, packageName: String?): String {
         val md: MessageDigest = MessageDigest.getInstance("SHA-256")
-        val sig: Signature = ctxt.packageManager
+        val sig: Signature = context.packageManager
             .getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures[0]
         return toHexStringWithColons(
             md.digest(sig.toByteArray())

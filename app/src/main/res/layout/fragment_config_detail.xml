@@ -13,6 +13,7 @@
         android:hint="@string/name"
         android:inputType="text"
         app:layout_constraintLeft_toLeftOf="parent"
+        android:autofillHints="title"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
@@ -21,6 +22,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/authority"
         android:inputType="textUri"
+        android:autofillHints="authority"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name" />
 

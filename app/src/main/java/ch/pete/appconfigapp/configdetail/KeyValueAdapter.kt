@@ -4,11 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.pete.appconfigapp.R
 import ch.pete.appconfigapp.model.KeyValue
+import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
 import kotlinx.android.synthetic.main.config_entry_list_item.view.delete
 import kotlinx.android.synthetic.main.config_entry_list_item.view.mainLayout
@@ -25,12 +27,12 @@ class KeyValueAdapter(
     private val viewBinderHelper = ViewBinderHelper()
 
     class KeyValueViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView) {
-        val mainLayout = rootView.mainLayout
+        val mainLayout: ConstraintLayout = rootView.mainLayout
         val key: TextView = rootView.key
         val value: TextView = rootView.value
 
-        val swipeLayout = rootView.swipeLayout
-        val delete = rootView.delete
+        val swipeLayout: SwipeRevealLayout = rootView.swipeLayout
+        val delete: TextView = rootView.delete
     }
 
     override fun onCreateViewHolder(
@@ -54,8 +56,8 @@ class KeyValueAdapter(
             }
         }
 
-        viewBinderHelper.setOpenOnlyOne(true);
-        viewBinderHelper.bind(holder.swipeLayout, keyValue.id.toString());
+        viewBinderHelper.setOpenOnlyOne(true)
+        viewBinderHelper.bind(holder.swipeLayout, keyValue.id.toString())
         viewBinderHelper.closeLayout(keyValue.id.toString())
         onDeleteClickListener?.let {
             holder.delete.setOnClickListener {

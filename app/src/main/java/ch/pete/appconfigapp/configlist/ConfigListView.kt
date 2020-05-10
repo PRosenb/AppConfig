@@ -1,4 +1,3 @@
 package ch.pete.appconfigapp.configlist
 
-interface ConfigListView {
-}
+interface ConfigListView

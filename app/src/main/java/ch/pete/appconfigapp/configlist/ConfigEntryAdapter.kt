@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.pete.appconfigapp.R
 import ch.pete.appconfigapp.model.ConfigEntry
 import ch.pete.appconfigapp.model.ResultType
+import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
 import kotlinx.android.synthetic.main.config_entry_list_item.view.*
 
@@ -27,15 +29,15 @@ class ConfigEntryAdapter(
     private val viewBinderHelper = ViewBinderHelper()
 
     class ConfigEntryViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView) {
-        val mainLayout = rootView.mainLayout
+        val mainLayout: ConstraintLayout = rootView.mainLayout
         val execute: ImageView = rootView.execute
         val title: TextView = rootView.title
         val keysCount: TextView = rootView.keysCount
         val resultTitle: TextView = rootView.resultTitle
         val lastResult: TextView = rootView.lastResult
 
-        val swipeLayout = rootView.swipeLayout
-        val delete = rootView.delete
+        val swipeLayout: SwipeRevealLayout = rootView.swipeLayout
+        val delete: TextView = rootView.delete
     }
 
     override fun onCreateViewHolder(
@@ -105,8 +107,8 @@ class ConfigEntryAdapter(
             }
         }
 
-        viewBinderHelper.setOpenOnlyOne(true);
-        viewBinderHelper.bind(holder.swipeLayout, configEntry.config.id.toString());
+        viewBinderHelper.setOpenOnlyOne(true)
+        viewBinderHelper.bind(holder.swipeLayout, configEntry.config.id.toString())
         viewBinderHelper.closeLayout(configEntry.config.id.toString())
         onDeleteClickListener?.let {
             holder.delete.setOnClickListener {
