@@ -113,6 +113,9 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
         val adapter = KeyValueAdapter(
             onItemClickListener = {
                 viewModel.onKeyValueEntryClicked(it)
+            },
+            onDeleteClickListener = {
+                viewModel.onKeyValueDeleteClicked(it)
             }
         )
         viewModel.keyValueEntriesByConfigId(configId)

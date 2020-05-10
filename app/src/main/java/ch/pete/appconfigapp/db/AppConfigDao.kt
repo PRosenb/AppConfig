@@ -72,5 +72,8 @@ interface AppConfigDao {
     suspend fun deleteKeyValues(keyValues: List<KeyValue>): Int
 
     @Delete
+    suspend fun deleteKeyValue(keyValue: KeyValue): Int
+
+    @Delete
     suspend fun deleteExecutionResults(executionResults: List<ExecutionResult>): Int
 }

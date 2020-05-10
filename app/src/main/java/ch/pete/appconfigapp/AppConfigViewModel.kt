@@ -105,6 +105,12 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         configDetailView.showKeyValueDetails(keyValue.configId, keyValue.id)
     }
 
+    fun onKeyValueDeleteClicked(keyValue: KeyValue) {
+        viewModelScope.launch {
+            appConfigDao.deleteKeyValue(keyValue)
+        }
+    }
+
     fun storeKeyValue(keyValue: KeyValue) {
         viewModelScope.launch {
             if (keyValue.id == null) {

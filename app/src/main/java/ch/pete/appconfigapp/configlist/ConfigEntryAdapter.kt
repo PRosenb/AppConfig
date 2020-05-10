@@ -27,13 +27,15 @@ class ConfigEntryAdapter(
     private val viewBinderHelper = ViewBinderHelper()
 
     class ConfigEntryViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView) {
-        val swipeLayout = rootView.swipeLayout
-        val delete = rootView.delete
+        val mainLayout = rootView.mainLayout
         val execute: ImageView = rootView.execute
         val title: TextView = rootView.title
         val keysCount: TextView = rootView.keysCount
         val resultTitle: TextView = rootView.resultTitle
         val lastResult: TextView = rootView.lastResult
+
+        val swipeLayout = rootView.swipeLayout
+        val delete = rootView.delete
     }
 
     override fun onCreateViewHolder(
@@ -98,7 +100,7 @@ class ConfigEntryAdapter(
             }
         }
         onItemClickListener?.let {
-            holder.itemView.setOnClickListener {
+            holder.mainLayout.setOnClickListener {
                 it(configEntry)
             }
         }
