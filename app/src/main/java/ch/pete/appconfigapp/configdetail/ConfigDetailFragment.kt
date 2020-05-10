@@ -36,51 +36,48 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_config_detail, container, false)
 
-        val configId = arguments?.let {
+        arguments?.let {
             if (it.containsKey(ARG_CONFIG_ENTRY_ID)) {
-                it.getLong(ARG_CONFIG_ENTRY_ID)
+                val configId = it.getLong(ARG_CONFIG_ENTRY_ID)
+                initView(rootView, configId)
             } else {
-                null
+                parentFragmentManager.popBackStack()
             }
-        }
-
-        if (configId != null) {
-            viewModel.configById(configId)?.let { configLiveData ->
-                configLiveData.observe(viewLifecycleOwner, object : Observer<Config> {
-                    override fun onChanged(loadedConfig: Config) {
-                        configLiveData.removeObserver(this)
-                        name.setText(loadedConfig.name)
-                        authority.setText(loadedConfig.authority)
-                    }
-                })
-                // TODO handle not found
-
-                rootView.execute.setOnClickListener {
-                    viewModel.onDetailExecuteClicked(configId)
-                }
-
-                initExecutionResultView(configId, rootView)
-                initKeyValuesView(configId, rootView)
-
-                rootView.addKeyValueButton.setOnClickListener {
-                    viewModel.onAddKeyValueClicked(configId)
-                }
-
-                rootView.name.addTextChangedListener(
-                    afterTextChanged = {
-                        viewModel.onNameUpdated(it.toString(), configId)
-                    }
-                )
-                rootView.authority.addTextChangedListener(
-                    afterTextChanged = {
-                        viewModel.onAuthorityUpdated(it.toString(), configId)
-                    }
-                )
-            } ?: parentFragmentManager.popBackStack()
-        } else {
-            parentFragmentManager.popBackStack()
-        }
+        } ?: parentFragmentManager.popBackStack()
         return rootView
+    }
+
+    private fun initView(rootView: View, configId: Long) {
+        val configLiveData = viewModel.configById(configId)
+        configLiveData.observe(viewLifecycleOwner, object : Observer<Config> {
+            override fun onChanged(loadedConfig: Config) {
+                configLiveData.removeObserver(this)
+                name.setText(loadedConfig.name)
+                authority.setText(loadedConfig.authority)
+            }
+        })
+
+        rootView.execute.setOnClickListener {
+            viewModel.onDetailExecuteClicked(configId)
+        }
+
+        initExecutionResultView(configId, rootView)
+        initKeyValuesView(configId, rootView)
+
+        rootView.addKeyValueButton.setOnClickListener {
+            viewModel.onAddKeyValueClicked(configId)
+        }
+
+        rootView.name.addTextChangedListener(
+            afterTextChanged = {
+                viewModel.onNameUpdated(it.toString(), configId)
+            }
+        )
+        rootView.authority.addTextChangedListener(
+            afterTextChanged = {
+                viewModel.onAuthorityUpdated(it.toString(), configId)
+            }
+        )
     }
 
     private fun initExecutionResultView(configId: Long, rootView: View) {

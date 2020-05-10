@@ -37,11 +37,8 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun configById(configId: Long?): LiveData<Config>? {
-        return configId?.let {
-            appConfigDao.fetchConfigById(configId)
-        }
-    }
+    fun configById(configId: Long): LiveData<Config> =
+        appConfigDao.fetchConfigById(configId)
 
     fun executionResultEntriesByConfigId(configId: Long) =
         appConfigDao.fetchExecutionResultEntriesByConfigId(configId)
