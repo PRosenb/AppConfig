@@ -49,6 +49,11 @@ class ConfigListFragment : Fragment(), ConfigListView {
             addItemDecoration(dividerItemDecoration)
             this.adapter = adapter
         }
+
+        rootView.addConfigButton.setOnClickListener {
+            viewModel.onAddConfigClicked()
+        }
+
         return rootView
     }
 }

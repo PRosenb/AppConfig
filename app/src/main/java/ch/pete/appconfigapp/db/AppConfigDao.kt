@@ -15,7 +15,14 @@ interface AppConfigDao {
 
     @Transaction
     @Query("SELECT * FROM config WHERE config.id = :configId")
-    fun fetchConfigEntryById(configId: Long): LiveData<ConfigEntry>
+    fun fetchConfigEntryByIdAsLiveData(configId: Long): LiveData<ConfigEntry>?
+
+    @Transaction
+    @Query("SELECT * FROM config WHERE config.id = :configId")
+    suspend fun fetchConfigEntryById(configId: Long): ConfigEntry?
+
+    @Query("SELECT * FROM config WHERE config.id = :configId")
+    fun fetchConfigById(configId: Long): LiveData<Config>
 
     @Transaction
     @Query("SELECT * FROM execution_result WHERE configId = :configId ORDER BY timestamp DESC")
@@ -53,8 +60,11 @@ interface AppConfigDao {
     @Insert
     suspend fun insertExecutionResult(executionResults: List<ExecutionResult>)
 
-    @Update
-    suspend fun updateConfig(config: Config): Int
+    @Query("UPDATE config SET name = :name WHERE id = :configId")
+    suspend fun updateConfigName(name: String, configId: Long)
+
+    @Query("UPDATE config SET authority = :authority WHERE id = :configId")
+    suspend fun updateConfigAuthority(authority: String, configId: Long)
 
     @Update
     suspend fun updateKeyValues(keyValues: List<KeyValue>): Int

@@ -33,7 +33,13 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun configEntryById(configId: Long?): LiveData<ConfigEntry>? {
         return configId?.let {
-            appConfigDao.fetchConfigEntryById(configId)
+            appConfigDao.fetchConfigEntryByIdAsLiveData(configId)
+        }
+    }
+
+    fun configById(configId: Long?): LiveData<Config>? {
+        return configId?.let {
+            appConfigDao.fetchConfigById(configId)
         }
     }
 
@@ -43,9 +49,15 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
     fun keyValueEntriesByConfigId(configId: Long) =
         appConfigDao.keyValueEntriesByConfigId(configId)
 
-    fun updateConfigEntry(config: Config) {
+    fun onNameUpdated(name: String, configId: Long) {
         viewModelScope.launch {
-            appConfigDao.updateConfig(config)
+            appConfigDao.updateConfigName(name, configId)
+        }
+    }
+
+    fun onAuthorityUpdated(authority: String, configId: Long) {
+        viewModelScope.launch {
+            appConfigDao.updateConfigAuthority(authority, configId)
         }
     }
 
@@ -105,6 +117,15 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
+    fun onAddConfigClicked() {
+        viewModelScope.launch {
+            val configId = withContext(Dispatchers.IO) {
+                appConfigDao.insertConfig(Config(name = "", authority = ""))
+            }
+            mainView.showDetails(configId)
+        }
+    }
+
     fun onConfigEntryClicked(configEntry: ConfigEntry) {
         configEntry.config.id?.let {
             mainView.showDetails(it)
@@ -119,10 +140,15 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun onDetailExecuteClicked(configEntry: ConfigEntry) {
+    fun onDetailExecuteClicked(configId: Long) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                callContentProviderAndShowResult(configEntry)
+                val configEntry = appConfigDao.fetchConfigEntryById(configId)
+                if (configEntry != null) {
+                    callContentProviderAndShowResult(configEntry)
+                } else {
+                    // TODO handle error
+                }
             }
         }
     }

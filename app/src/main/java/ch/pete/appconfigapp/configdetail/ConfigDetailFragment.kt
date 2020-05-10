@@ -4,27 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.pete.appconfigapp.AppConfigViewModel
 import ch.pete.appconfigapp.R
-import ch.pete.appconfigapp.model.ConfigEntry
+import ch.pete.appconfigapp.model.Config
 import kotlinx.android.synthetic.main.fragment_config_detail.*
 import kotlinx.android.synthetic.main.fragment_config_detail.view.*
 
 class ConfigDetailFragment : Fragment(), ConfigDetailView {
     companion object {
-        private const val PREF_AUTHORITY = "authority"
         const val ARG_CONFIG_ENTRY_ID = "ARG_CONFIG_ENTRY_ID"
     }
 
     private val viewModel: AppConfigViewModel by activityViewModels()
-    private var configEntry: ConfigEntry? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,20 +35,6 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_config_detail, container, false)
-        rootView.button.setOnClickListener {
-            configEntry?.let {
-                val updatedConfigEntry = it.copy(
-                    config = it.config.copy(
-                        name = name.text.toString(),
-                        authority = authority.text.toString()
-                    )
-                )
-                viewModel.updateConfigEntry(updatedConfigEntry.config)
-                // TODO update values too
-                viewModel.onDetailExecuteClicked(updatedConfigEntry)
-            }
-            // TODO handle error
-        }
 
         val configId = arguments?.let {
             if (it.containsKey(ARG_CONFIG_ENTRY_ID)) {
@@ -61,22 +45,41 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
         }
 
         if (configId != null) {
-            viewModel.configEntryById(configId)
-                ?.observe(viewLifecycleOwner, Observer { loadedConfigEntry ->
-                    configEntry = loadedConfigEntry
-                    name.setText(loadedConfigEntry.config.name)
-                    authority.setText(loadedConfigEntry.config.authority)
+            viewModel.configById(configId)?.let { configLiveData ->
+                configLiveData.observe(viewLifecycleOwner, object : Observer<Config> {
+                    override fun onChanged(loadedConfig: Config) {
+                        configLiveData.removeObserver(this)
+                        name.setText(loadedConfig.name)
+                        authority.setText(loadedConfig.authority)
+                    }
                 })
-            // TODO handle not found
+                // TODO handle not found
 
-            initExecutionResultView(configId, rootView)
-            initKeyValuesView(configId, rootView)
+                rootView.execute.setOnClickListener {
+                    viewModel.onDetailExecuteClicked(configId)
+                }
 
-            rootView.addKeyValueButton.setOnClickListener {
-                viewModel.onAddKeyValueClicked(configId)
-            }
+                initExecutionResultView(configId, rootView)
+                initKeyValuesView(configId, rootView)
+
+                rootView.addKeyValueButton.setOnClickListener {
+                    viewModel.onAddKeyValueClicked(configId)
+                }
+
+                rootView.name.addTextChangedListener(
+                    afterTextChanged = {
+                        viewModel.onNameUpdated(it.toString(), configId)
+                    }
+                )
+                rootView.authority.addTextChangedListener(
+                    afterTextChanged = {
+                        viewModel.onAuthorityUpdated(it.toString(), configId)
+                    }
+                )
+            } ?: parentFragmentManager.popBackStack()
+        } else {
+            parentFragmentManager.popBackStack()
         }
-
         return rootView
     }
 
@@ -128,30 +131,6 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
             )
             addItemDecoration(dividerItemDecoration)
             this.adapter = adapter
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadUiValues()
-    }
-
-    override fun onPause() {
-        storeUiValues()
-        super.onPause()
-    }
-
-    private fun storeUiValues() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor = prefs.edit()
-        editor.putString(PREF_AUTHORITY, authority.text.toString())
-        editor.apply()
-    }
-
-    private fun loadUiValues() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        prefs.getString(PREF_AUTHORITY, null)?.let {
-            authority.setText(it)
         }
     }
 }

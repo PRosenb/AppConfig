@@ -26,7 +26,7 @@
         app:layout_constraintTop_toBottomOf="@id/name" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/execute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
@@ -41,7 +41,7 @@
         android:background="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/execute" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/keyValues"
@@ -58,7 +58,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:background="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@id/dividerBetweenKeyValuesAndExecutionResults"
         app:layout_constraintRight_toRightOf="parent"
         app:srcCompat="@drawable/ic_plus_circle_outline" />
