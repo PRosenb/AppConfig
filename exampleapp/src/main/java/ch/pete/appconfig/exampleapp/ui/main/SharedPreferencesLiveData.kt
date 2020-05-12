@@ -5,10 +5,9 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import androidx.lifecycle.LiveData
 
 
-class SharedPreferencesLiveData(
-    var sharedPrefs: SharedPreferences
-) :
+class SharedPreferencesLiveData(private var sharedPrefs: SharedPreferences) :
     LiveData<Map<String, *>>() {
+
     private val preferenceChangeListener =
         OnSharedPreferenceChangeListener { _, _ ->
             value = sharedPrefs.all

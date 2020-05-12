@@ -11,10 +11,6 @@ import ch.pete.appconfig.exampleapp.R
 import kotlinx.android.synthetic.main.main_fragment.view.output
 
 class MainFragment : Fragment() {
-    companion object {
-        fun newInstance() = MainFragment()
-    }
-
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreateView(
