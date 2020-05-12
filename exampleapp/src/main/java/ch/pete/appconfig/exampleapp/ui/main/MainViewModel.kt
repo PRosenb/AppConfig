@@ -1,7 +1,11 @@
 package ch.pete.appconfig.exampleapp.ui.main
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.preference.PreferenceManager
 
-class MainViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+class MainViewModel(application: Application) : AndroidViewModel(application) {
+    val sharedPreferencesLiveData = SharedPreferencesLiveData(
+        PreferenceManager.getDefaultSharedPreferences(application)
+    )
 }
