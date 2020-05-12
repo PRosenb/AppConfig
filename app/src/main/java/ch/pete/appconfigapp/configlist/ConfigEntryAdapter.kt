@@ -16,6 +16,7 @@ import ch.pete.appconfigapp.model.ConfigEntry
 import ch.pete.appconfigapp.model.ResultType
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
+import kotlinx.android.synthetic.main.config_entry_list_item.view.clone
 import kotlinx.android.synthetic.main.config_entry_list_item.view.delete
 import kotlinx.android.synthetic.main.config_entry_list_item.view.execute
 import kotlinx.android.synthetic.main.config_entry_list_item.view.keysCount
@@ -29,6 +30,7 @@ import kotlinx.android.synthetic.main.config_entry_list_item.view.title
 class ConfigEntryAdapter(
     private val onItemClickListener: ((ConfigEntry) -> Unit)?,
     private val onExecuteClickListener: ((ConfigEntry) -> Unit)?,
+    private val onCloneClickListener: ((ConfigEntry) -> Unit)?,
     private val onDeleteClickListener: ((ConfigEntry) -> Unit)?
 ) :
     ListAdapter<ConfigEntry, ConfigEntryAdapter.ConfigEntryViewHolder>(
@@ -45,6 +47,7 @@ class ConfigEntryAdapter(
         val lastResult: TextView = rootView.lastResult
 
         val swipeLayout: SwipeRevealLayout = rootView.swipeLayout
+        val clone: TextView = rootView.clone
         val delete: TextView = rootView.delete
     }
 
@@ -87,6 +90,12 @@ class ConfigEntryAdapter(
         viewBinderHelper.setOpenOnlyOne(true)
         viewBinderHelper.bind(holder.swipeLayout, configEntry.config.id.toString())
         viewBinderHelper.closeLayout(configEntry.config.id.toString())
+        onCloneClickListener?.let {
+            holder.clone.setOnClickListener {
+                it(configEntry)
+                viewBinderHelper.closeLayout(configEntry.config.id.toString())
+            }
+        }
         onDeleteClickListener?.let {
             holder.delete.setOnClickListener {
                 it(configEntry)

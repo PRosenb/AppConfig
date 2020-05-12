@@ -46,6 +46,27 @@ interface AppConfigDao {
         deleteExecutionResults(configEntry.executionResults)
     }
 
+    @Transaction
+    suspend fun cloneConfigEntryWithoutResults(configEntry: ConfigEntry, newName: String) {
+        val configId = insertConfig(
+            configEntry.config.copy(
+                id = null,
+                name = newName
+            )
+        )
+
+        // https://issuetracker.google.com/issues/62848977
+        val keyValues =
+            configEntry.keyValues.map {
+                it.copy(
+                    id = null,
+                    configId = configId
+                )
+            }
+
+        insertKeyValues(keyValues)
+    }
+
     @Query("INSERT INTO config (name, authority) VALUES ('','')")
     suspend fun insertEmptyConfig(): Long
 
@@ -56,7 +77,13 @@ interface AppConfigDao {
     suspend fun insertKeyValue(keyValue: KeyValue): Long
 
     @Insert
-    suspend fun insertExecutionResult(executionResults: List<ExecutionResult>)
+    suspend fun insertKeyValues(keyValues: List<KeyValue>)
+
+    @Insert
+    suspend fun insertExecutionResult(executionResult: ExecutionResult): Long
+
+    @Insert
+    suspend fun insertExecutionResults(executionResults: List<ExecutionResult>)
 
     @Query("UPDATE config SET name = :name WHERE id = :configId")
     suspend fun updateConfigName(name: String, configId: Long)

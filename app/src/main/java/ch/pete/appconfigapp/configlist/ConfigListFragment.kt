@@ -36,6 +36,9 @@ class ConfigListFragment : Fragment(), ConfigListView {
             onItemClickListener = {
                 viewModel.onConfigEntryClicked(it)
             },
+            onCloneClickListener = {
+                viewModel.onConfigEntryCloneClicked(it)
+            },
             onDeleteClickListener = {
                 viewModel.onConfigEntryDeleteClicked(it)
             }

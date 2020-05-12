@@ -70,6 +70,18 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
         } ?: throw IllegalArgumentException("config.id is null")
     }
 
+    fun onConfigEntryCloneClicked(configEntry: ConfigEntry) {
+        viewModelScope.launch {
+            appConfigDao.cloneConfigEntryWithoutResults(
+                configEntry,
+                String.format(
+                    getApplication<Application>().getString(R.string.cloned_name),
+                    configEntry.config.name
+                )
+            )
+        }
+    }
+
     fun onConfigEntryDeleteClicked(configEntry: ConfigEntry) {
         viewModelScope.launch {
             appConfigDao.deleteConfigEntry(configEntry)
@@ -175,6 +187,6 @@ class AppConfigViewModel(application: Application) : AndroidViewModel(applicatio
             valuesCount = valuesCount,
             message = message
         )
-        appConfigDatabase.appConfigDao().insertExecutionResult(listOf(executionResult))
+        appConfigDatabase.appConfigDao().insertExecutionResult(executionResult)
     }
 }
