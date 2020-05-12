@@ -1,2 +1,4 @@
-rootProject.name='AppConfig'
-include ':app', ':appconfig'
+rootProject.name = 'AppConfig'
+include ':app'
+include ':appconfig'
+include ':exampleapp'
