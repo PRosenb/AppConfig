@@ -4,12 +4,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
-import ch.pete.appconfigapp.configdetail.ConfigDetailFragment
 import timber.log.Timber
 
 
-class MainActivity : AppCompatActivity(), MainView, FragmentManager.OnBackStackChangedListener {
-    private lateinit var viewModel: AppConfigViewModel
+class MainActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedListener {
+    private lateinit var viewModel: MainActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,8 +17,7 @@ class MainActivity : AppCompatActivity(), MainView, FragmentManager.OnBackStackC
         }
         setContentView(R.layout.activity_main)
 
-        viewModel = ViewModelProvider(this).get(AppConfigViewModel::class.java)
-        viewModel.mainView = this
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         supportFragmentManager.addOnBackStackChangedListener(this)
         shouldDisplayHomeUp()
@@ -33,23 +31,6 @@ class MainActivity : AppCompatActivity(), MainView, FragmentManager.OnBackStackC
         //This method is called when the up button is pressed. Just the pop back stack.
         supportFragmentManager.popBackStack()
         return true
-    }
-
-    override fun showDetails(configId: Long) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val fragment = ConfigDetailFragment()
-
-        fragment.arguments = Bundle().apply {
-            putLong(ConfigDetailFragment.ARG_CONFIG_ENTRY_ID, configId)
-        }
-        fragmentTransaction
-            .replace(
-                R.id.fragmentContainer,
-                fragment
-            )
-
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
     }
 
     private fun shouldDisplayHomeUp() {

@@ -7,20 +7,24 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import ch.pete.appconfigapp.AppConfigViewModel
+import ch.pete.appconfigapp.MainActivityViewModel
 import ch.pete.appconfigapp.R
+import ch.pete.appconfigapp.configdetail.ConfigDetailFragment
 import kotlinx.android.synthetic.main.fragment_config_list.view.addConfigButton
 import kotlinx.android.synthetic.main.fragment_config_list.view.recyclerView
 
 @Suppress("unused")
 class ConfigListFragment : Fragment(), ConfigListView {
-    private val viewModel: AppConfigViewModel by activityViewModels()
+    private val viewModel: ConfigListViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.configListView = this
+        viewModel.view = this
+        viewModel.mainActivityViewModel =
+            ViewModelProvider(requireActivity()).get(MainActivityViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -63,5 +67,22 @@ class ConfigListFragment : Fragment(), ConfigListView {
         }
 
         return rootView
+    }
+
+    override fun showDetails(configId: Long) {
+        val fragmentTransaction = parentFragmentManager.beginTransaction()
+        val fragment = ConfigDetailFragment()
+
+        fragment.arguments = Bundle().apply {
+            putLong(ConfigDetailFragment.ARG_CONFIG_ENTRY_ID, configId)
+        }
+        fragmentTransaction
+            .replace(
+                R.id.fragmentContainer,
+                fragment
+            )
+
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
     }
 }

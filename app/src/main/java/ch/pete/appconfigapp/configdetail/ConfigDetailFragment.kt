@@ -6,12 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ch.pete.appconfigapp.AppConfigViewModel
+import ch.pete.appconfigapp.MainActivityViewModel
 import ch.pete.appconfigapp.R
 import ch.pete.appconfigapp.model.Config
 import kotlinx.android.synthetic.main.fragment_config_detail.authority
@@ -28,11 +29,13 @@ class ConfigDetailFragment : Fragment(), ConfigDetailView {
         const val ARG_CONFIG_ENTRY_ID = "ARG_CONFIG_ENTRY_ID"
     }
 
-    private val viewModel: AppConfigViewModel by activityViewModels()
+    private val viewModel: ConfigDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.configDetailView = this
+        viewModel.view = this
+        viewModel.mainActivityViewModel =
+            ViewModelProvider(requireActivity()).get(MainActivityViewModel::class.java)
     }
 
     override fun onCreateView(

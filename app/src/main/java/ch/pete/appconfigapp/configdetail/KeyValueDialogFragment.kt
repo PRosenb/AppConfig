@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import ch.pete.appconfigapp.AppConfigViewModel
 import ch.pete.appconfigapp.R
+import ch.pete.appconfigapp.configlist.ConfigListViewModel
 import ch.pete.appconfigapp.model.KeyValue
-import kotlinx.android.synthetic.main.dialogfragment_keyvalues.view.*
+import kotlinx.android.synthetic.main.dialogfragment_keyvalues.view.key
+import kotlinx.android.synthetic.main.dialogfragment_keyvalues.view.ok
+import kotlinx.android.synthetic.main.dialogfragment_keyvalues.view.value
 
 
 class KeyValueDialogFragment : DialogFragment() {
@@ -19,7 +21,8 @@ class KeyValueDialogFragment : DialogFragment() {
         const val ARG_KEY_VALUE_ID = "keyValue_id"
     }
 
-    private val viewModel: AppConfigViewModel by activityViewModels()
+    // TODO rework
+    private val viewModel: ConfigListViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

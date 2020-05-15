@@ -1,3 +1,5 @@
 package ch.pete.appconfigapp.configlist
 
-interface ConfigListView
+interface ConfigListView {
+    fun showDetails(configId: Long)
+}
