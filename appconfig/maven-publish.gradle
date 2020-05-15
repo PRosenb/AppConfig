@@ -15,6 +15,26 @@ publishing {
             artifact("$buildDir/outputs/aar/appconfig-release.aar")
             artifact(sourceJar)
 
+            pom {
+                name = "AppConfig"
+                description = "Reconfigure your app for test purpose."
+                url = "https://github.com/PRosenb/AppConfig"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "PRosenb"
+                        name = "Peter Rosenberg"
+                    }
+                }
+                scm {
+                    url = "https://github.com/PRosenb/AppConfig"
+                }
+            }
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
 
