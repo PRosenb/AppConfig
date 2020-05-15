@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import ch.pete.appconfigapp.MainActivityViewModel
 import ch.pete.appconfigapp.R
-import ch.pete.appconfigapp.configlist.ConfigListViewModel
 import ch.pete.appconfigapp.model.KeyValue
 import kotlinx.android.synthetic.main.dialogfragment_keyvalues.view.key
 import kotlinx.android.synthetic.main.dialogfragment_keyvalues.view.ok
@@ -21,8 +22,13 @@ class KeyValueDialogFragment : DialogFragment() {
         const val ARG_KEY_VALUE_ID = "keyValue_id"
     }
 
-    // TODO rework
-    private val viewModel: ConfigListViewModel by activityViewModels()
+    private val viewModel: KeyValueViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.mainActivityViewModel =
+            ViewModelProvider(requireActivity()).get(MainActivityViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

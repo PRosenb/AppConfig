@@ -8,7 +8,6 @@ import ch.pete.appconfigapp.MainActivityViewModel
 import ch.pete.appconfigapp.R
 import ch.pete.appconfigapp.db.AppConfigDao
 import ch.pete.appconfigapp.model.ConfigEntry
-import ch.pete.appconfigapp.model.KeyValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,9 +23,6 @@ class ConfigListViewModel(application: Application) : AndroidViewModel(applicati
     val configEntries: LiveData<List<ConfigEntry>> by lazy {
         appConfigDao.fetchConfigEntries()
     }
-
-    fun keyValueEntryByKeyValueId(keyValueId: Long) =
-        appConfigDao.keyValueEntryByKeyValueId(keyValueId)
 
     fun onAddConfigClicked() {
         viewModelScope.launch {
@@ -65,16 +61,6 @@ class ConfigListViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 mainActivityViewModel.callContentProviderAndShowResult(configEntry)
-            }
-        }
-    }
-
-    fun storeKeyValue(keyValue: KeyValue) {
-        viewModelScope.launch {
-            if (keyValue.id == null) {
-                appConfigDao.insertKeyValue(keyValue)
-            } else {
-                appConfigDao.updateKeyValue(keyValue)
             }
         }
     }
