@@ -12,6 +12,7 @@ import ch.pete.appconfigapp.model.ConfigEntry
 import ch.pete.appconfigapp.model.ExecutionResult
 import ch.pete.appconfigapp.model.KeyValue
 
+@Suppress("TooManyFunctions")
 @Dao
 interface AppConfigDao {
     @Transaction

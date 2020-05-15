@@ -1,5 +1,6 @@
 package ch.pete.appconfig.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.Signature
@@ -9,9 +10,13 @@ import kotlin.experimental.and
 
 
 internal object SignatureUtils {
+    // TODO rework to remove usage of deprecated code
+    @SuppressLint("PackageManagerGetSignatures")
     @Throws(PackageManager.NameNotFoundException::class, NoSuchAlgorithmException::class)
-    fun getSignatureHash(context: Context, packageName: String?): String {
+    fun getSignatureHash(context: Context, packageName: String): String {
         val md: MessageDigest = MessageDigest.getInstance("SHA-256")
+
+        @Suppress("DEPRECATION")
         val sig: Signature = context.packageManager
             .getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures[0]
         return toHexStringWithColons(
@@ -20,6 +25,7 @@ internal object SignatureUtils {
     }
 
     // based on https://stackoverflow.com/a/2197650/115145
+    @Suppress("MagicNumber")
     private fun toHexStringWithColons(bytes: ByteArray): String {
         val hexArray = charArrayOf(
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
