@@ -57,7 +57,6 @@ android {
 }
 
 dependencies {
-    implementation "com.jakewharton.timber:timber:4.5.1"
     implementation "androidx.preference:preference-ktx:1.1.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'

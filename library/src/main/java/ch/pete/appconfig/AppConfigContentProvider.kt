@@ -8,12 +8,16 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.preference.PreferenceManager
 import ch.pete.appconfig.util.SignatureUtils
-import timber.log.Timber
 
 
 class AppConfigContentProvider : ContentProvider() {
+    companion object {
+        private const val TAG = "AppConfig"
+    }
+
     override fun onCreate() = true
 
     override fun update(
@@ -21,7 +25,6 @@ class AppConfigContentProvider : ContentProvider() {
         values: ContentValues?,
         selection: String?, selectionArgs: Array<out String>?
     ): Int {
-        Timber.d("uri: $uri, values: $values")
         context?.let { context ->
             checkIfAllowed(context, values)
 
@@ -71,13 +74,13 @@ class AppConfigContentProvider : ContentProvider() {
     private fun checkIfAllowed(context: Context, values: ContentValues?) {
         val callingApplicationId = context.packageManager.getNameForUid(Binder.getCallingUid())
         if (callingApplicationId == null) {
-            Timber.e("callingApplicationId is null")
+            Log.e(TAG, "callingApplicationId is null")
         }
 
         val allowedApp = callingApplicationId?.let {
             val callingSignature =
                 SignatureUtils.getSignatureHash(context, callingApplicationId)
-            Timber.d("callingApp: $callingApplicationId, callingAppSignature: $callingSignature")
+            Log.d(TAG, "callingApp: $callingApplicationId, callingAppSignature: $callingSignature")
 
             AppConfig.authorizedApps.firstOrNull {
                 callingApplicationId == it.applicationId
@@ -89,7 +92,7 @@ class AppConfigContentProvider : ContentProvider() {
         if (values?.containsKey("TEST_ACCESS_DENIED") == true) {
             throw SecurityException("Access Denied")
         } else {
-            Timber.d("authorized access to $allowedApp")
+            Log.d(TAG, "authorized access to $allowedApp")
         }
     }
 
