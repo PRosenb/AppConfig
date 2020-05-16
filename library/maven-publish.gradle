@@ -14,7 +14,7 @@ publishing {
             groupId 'ch.pete.appconfig'
             artifactId 'appconfig'
             version this.version
-            artifact("$buildDir/outputs/aar/library-release.aar")
+            artifact("$buildDir/outputs/aar/AppConfig_$version-release.aar")
             artifact(sourceJar)
 
             pom {
