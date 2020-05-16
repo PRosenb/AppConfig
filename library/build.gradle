@@ -38,7 +38,7 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 16
         setProperty("archivesBaseName", "AppConfig_" + version)
     }
 
@@ -46,7 +46,6 @@ android {
         // see also kotlinOptions.allWarningsAsErrors below
         warningsAsErrors true
         abortOnError true
-        ignore "ContentDescription", "Overdraw"
     }
     compileOptions {
         sourceCompatibility = '1.8'
