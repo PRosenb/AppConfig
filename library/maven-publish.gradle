@@ -8,6 +8,10 @@ task sourceJar(type: Jar) {
     classifier "sources"
 }
 
+// do not fail any task if they are not defined
+def getNexusUsername() { if (hasProperty("NEXUS_USERNAME")) NEXUS_USERNAME else "" }
+def getNexusPassword() { if (hasProperty("NEXUS_PASSWORD")) NEXUS_PASSWORD else "" }
+
 publishing {
     publications {
         Production(MavenPublication) {
@@ -57,8 +61,8 @@ publishing {
     repositories {
         maven {
             credentials {
-                username NEXUS_USERNAME
-                password NEXUS_PASSWORD
+                username getNexusUsername()
+                password getNexusPassword()
             }
             if (project.version.endsWith("-SNAPSHOT")) {
                 url "https://oss.sonatype.org/content/repositories/snapshots/"
