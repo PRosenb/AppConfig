@@ -34,6 +34,7 @@ jobs:
             # - Copy content of ./secring.gpg.base64 to env var
             echo $PGP_SECRING_BASE64 | base64 --decode > secring.gpg
             ./gradlew publish
+            ./gradlew closeRepository
       - persist_to_workspace:
           root: library/build/outputs/
           paths:

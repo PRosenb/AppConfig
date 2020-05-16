@@ -76,3 +76,9 @@ publishing {
 signing {
     sign publishing.publications.Production
 }
+
+nexusStaging {
+    username = getNexusUsername()
+    password =  getNexusPassword()
+    packageGroup = "ch.pete.appconfig"
+}
