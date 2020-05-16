@@ -14,12 +14,34 @@ jobs:
             echo "NEXUS_USERNAME=$NEXUS_USERNAME" >> gradle.properties
             echo "NEXUS_PASSWORD=$NEXUS_PASSWORD" >> gradle.properties
             ./gradlew check bundleReleaseAar
+      #      - persist_to_workspace:
+      #          root: library/build/outputs/
+      #          paths:
+      #            - aar/*.aar
+      - store_artifacts:
+          path: library/build/outputs/aar
+
+  publish-to-ossrh:
+    executor: android/android
+    steps:
+      - checkout
+      - run:
+          name: Publish the lib to OSSRH.
+          command: |
+            echo "NEXUS_USERNAME=$NEXUS_USERNAME" >> gradle.properties
+            echo "NEXUS_PASSWORD=$NEXUS_PASSWORD" >> gradle.properties
+            echo "signing.keyId=$PGP_SIGNING_KEY_ID" >> gradle.properties
+            echo "signing.password=$PGP_SIGNING_PASSWORD" >> gradle.properties
+            echo "signing.secretKeyRingFile=secring.gpg" >> gradle.properties
+            # convert to env var
+            # - base64 ~/.gnupg/secring.gpg > ./secring.gpg.base64
+            # - Copy content of ./secring.gpg.base64 to env var
+            echo $PGP_SECRING_BASE64 | base64 --decode > secring.gpg
+            ./gradlew publish
       - persist_to_workspace:
           root: library/build/outputs/
           paths:
             - aar/*.aar
-      - store_artifacts:
-          path: library/build/outputs/aar
 
   publish-github-release:
     docker:
@@ -41,9 +63,15 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+      - publish-to-ossrh:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - publish-github-release:
           requires:
-            - build
+            - publish-to-ossrh
           filters:
             tags:
               only: /^v.*/
