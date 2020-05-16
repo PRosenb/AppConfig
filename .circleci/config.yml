@@ -1,0 +1,51 @@
+version: 2.1
+
+orbs:
+  android: circleci/android@0.2.0
+
+jobs:
+  build:
+    executor: android/android
+    steps:
+      - checkout
+      - run:
+          name: Check, test and build the app.
+          command: |
+            echo "NEXUS_USERNAME=$NEXUS_USERNAME" >> gradle.properties
+            echo "NEXUS_PASSWORD=$NEXUS_PASSWORD" >> gradle.properties
+            ./gradlew check bundleReleaseAar
+      - persist_to_workspace:
+          root: library/build/outputs/
+          paths:
+            - aar/*.aar
+      - store_artifacts:
+          path: library/build/outputs/aar
+
+  publish-github-release:
+    docker:
+      - image: circleci/golang:1.10
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            go get github.com/tcnksm/ghr
+            ghr -t ${GITHUB_PERSONAL_ACCESS_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${CIRCLE_TAG} ./artifacts/aar/*.aar
+
+workflows:
+  version: 2
+  build-n-publish:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+      - publish-github-release:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
