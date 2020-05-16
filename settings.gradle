@@ -1,4 +1,3 @@
 rootProject.name = 'AppConfig'
-include ':app'
 include ':library'
 include ':exampleapp'
