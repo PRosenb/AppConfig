@@ -70,29 +70,40 @@ class AppConfigContentProvider : ContentProvider() {
         return appliedKeysCount
     }
 
+    @Suppress("ThrowsCount")
     @Throws(SecurityException::class)
     private fun checkIfAllowed(context: Context, values: ContentValues?) {
         val callingApplicationId = context.packageManager.getNameForUid(Binder.getCallingUid())
         if (callingApplicationId == null) {
             Log.e(TAG, "callingApplicationId is null")
+            throw SecurityException("Access Denied")
         }
 
-        val allowedApp = callingApplicationId?.let {
-            val callingSignature =
-                SignatureUtils.getSignatureHash(context, callingApplicationId)
-            Log.d(TAG, "callingApp: $callingApplicationId, callingAppSignature: $callingSignature")
-
+        val callingSignature = SignatureUtils.getSignatureHash(context, callingApplicationId)
+        val allowedApp =
             AppConfig.authorizedApps.firstOrNull {
                 callingApplicationId == it.applicationId
                         && callingSignature == it.signature
             }
-        }
 
-        allowedApp ?: throw SecurityException("Access Denied")
+        if (allowedApp == null) {
+            Log.e(
+                TAG,
+                "Access denied\n" +
+                        "To allow add:\n" +
+                        "AppConfig.authorizedApps.add(\n" +
+                        "  AuthorizedApp(\n" +
+                        "    applicationId = \"$callingApplicationId\",\n" +
+                        "    signature = \"$callingSignature\"\n" +
+                        "  )\n" +
+                        ")"
+            )
+            throw SecurityException("Access denied")
+        }
         if (values?.containsKey("TEST_ACCESS_DENIED") == true) {
-            throw SecurityException("Access Denied")
+            throw SecurityException("Access denied by TEST_ACCESS_DENIED key")
         } else {
-            Log.d(TAG, "authorized access to $allowedApp")
+            Log.d(TAG, "Authorize access to $allowedApp")
         }
     }
 
