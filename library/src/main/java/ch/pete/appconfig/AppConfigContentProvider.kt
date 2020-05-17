@@ -59,10 +59,14 @@ class AppConfigContentProvider : ContentProvider() {
             }
             .forEach { key ->
                 val value = values.get(key)
-                when (val dataType = value.javaClass) {
-                    String::class.java -> editor.putString(key, value as String)
-                    Boolean::class.java -> editor.putBoolean(key, value as Boolean)
-                    else -> throw IllegalArgumentException("Unsupported data type $dataType")
+                if (value == null) {
+                    editor.remove(key)
+                } else {
+                    when (val dataType = value.javaClass) {
+                        String::class.java -> editor.putString(key, value as String)
+                        Boolean::class.java -> editor.putBoolean(key, value as Boolean)
+                        else -> throw IllegalArgumentException("Unsupported data type $dataType")
+                    }
                 }
                 appliedKeysCount++
             }
