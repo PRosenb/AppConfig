@@ -76,14 +76,15 @@ class AppConfigContentProvider : ContentProvider() {
         val callingApplicationId = context.packageManager.getNameForUid(Binder.getCallingUid())
         if (callingApplicationId == null) {
             Log.e(TAG, "callingApplicationId is null")
-            throw SecurityException("Access Denied")
+            throw SecurityException("Access denied")
         }
 
-        val callingSignature = SignatureUtils.getSignatureHash(context, callingApplicationId)
+        val callerCurrentAndPastSignatures =
+            SignatureUtils.getCurrentAndPastSignatures(context, callingApplicationId)
         val allowedApp =
             AppConfig.authorizedApps.firstOrNull {
                 callingApplicationId == it.applicationId
-                        && callingSignature == it.signature
+                        && callerCurrentAndPastSignatures.contains(it.signature)
             }
 
         if (allowedApp == null) {
@@ -94,7 +95,7 @@ class AppConfigContentProvider : ContentProvider() {
                         "AppConfig.authorizedApps.add(\n" +
                         "  AuthorizedApp(\n" +
                         "    applicationId = \"$callingApplicationId\",\n" +
-                        "    signature = \"$callingSignature\"\n" +
+                        "    signature = \"${callerCurrentAndPastSignatures[0]}\"\n" +
                         "  )\n" +
                         ")"
             )
