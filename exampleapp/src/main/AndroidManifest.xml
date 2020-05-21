@@ -18,7 +18,7 @@
         </activity>
         <provider
             android:name="ch.pete.appconfig.AppConfigContentProvider"
-            android:authorities="ch.pete.appconfig"
+            android:authorities="ch.pete.config"
             android:exported="true"
             android:readPermission="NONE" />
     </application>
