@@ -2,7 +2,16 @@ package ch.pete.appconfig
 
 import android.content.ContentValues
 
-data class AuthorizedApp(val applicationId: String, val signature: String)
+data class AuthorizedApp(
+    /**
+     * The applicationId of the calling app.
+     */
+    val applicationId: String,
+    /**
+     * The SHA256 hash of the key the calling app is signed with.
+     */
+    val signature: String
+)
 
 object AppConfig {
     /**
@@ -31,11 +40,12 @@ object AppConfig {
     val authorizedKeys = mutableListOf<String>()
 
     init {
+        // AppConfigApp signed with key controlled solely by App Signing by Google Play
         authorizedApps.add(
             AuthorizedApp(
                 applicationId = "ch.pete.appconfigapp",
                 signature =
-                "07:0D:00:06:0D:0F:02:0D:0C:0C:05:04:05:00:03:07:00:0A:0F:0D:07:0E:0B:01:01:0C:0F:0B:00:07:09:0C"
+                "19:C6:22:9A:42:45:70:15:F5:D5:B7:5B:73:4C:DA:31:33:A5:6C:33:A8:72:A4:C5:D2:68:95:90:14:F6:33:CE"
             )
         )
     }
