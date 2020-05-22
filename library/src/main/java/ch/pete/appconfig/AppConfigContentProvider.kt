@@ -88,7 +88,6 @@ class AppConfigContentProvider : ContentProvider() {
         }
     }
 
-    @Suppress("ThrowsCount")
     @Throws(SecurityException::class)
     private fun checkIfAllowed(context: Context, values: ContentValues?) {
         val callingApplicationId = context.packageManager.getNameForUid(Binder.getCallingUid())
@@ -105,24 +104,33 @@ class AppConfigContentProvider : ContentProvider() {
                         && callerCurrentAndPastSignatures.contains(it.signature)
             }
 
-        if (allowedApp == null) {
-            Log.e(
-                TAG,
-                "Access denied\n" +
-                        "To allow add:\n" +
-                        "AppConfig.authorizedApps.add(\n" +
-                        "  AuthorizedApp(\n" +
-                        "    applicationId = \"$callingApplicationId\",\n" +
-                        "    signature = \"${callerCurrentAndPastSignatures[0]}\"\n" +
-                        "  )\n" +
-                        ")"
-            )
-            throw SecurityException("Access denied")
+        val securityException = when {
+            allowedApp == null -> {
+                Log.e(
+                    TAG,
+                    "Access denied\n" +
+                            "To allow add (Kotlin):\n" +
+                            "AppConfig.authorizedApps.add(\n" +
+                            "  AuthorizedApp(\n" +
+                            "    applicationId = \"$callingApplicationId\",\n" +
+                            "    signature = \"${callerCurrentAndPastSignatures[0]}\"\n" +
+                            "  )\n" +
+                            ")"
+                )
+                SecurityException("Access denied")
+            }
+            values?.containsKey("TEST_ACCESS_DENIED") == true -> {
+                SecurityException("Access denied by TEST_ACCESS_DENIED key")
+            }
+            else -> {
+                null
+            }
         }
-        if (values?.containsKey("TEST_ACCESS_DENIED") == true) {
-            throw SecurityException("Access denied by TEST_ACCESS_DENIED key")
-        } else {
+
+        if (securityException == null) {
             Log.d(TAG, "Authorize access to $allowedApp")
+        } else {
+            throw securityException
         }
     }
 
