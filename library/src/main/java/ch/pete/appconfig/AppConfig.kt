@@ -31,11 +31,11 @@ object AppConfig {
     val authorizedKeys = mutableListOf<String>()
 
     init {
-        @Suppress("MaxLineLength")
         authorizedApps.add(
             AuthorizedApp(
                 applicationId = "ch.pete.appconfigapp",
-                signature = "07:0D:00:06:0D:0F:02:0D:0C:0C:05:04:05:00:03:07:00:0A:0F:0D:07:0E:0B:01:01:0C:0F:0B:00:07:09:0C"
+                signature =
+                "07:0D:00:06:0D:0F:02:0D:0C:0C:05:04:05:00:03:07:00:0A:0F:0D:07:0E:0B:01:01:0C:0F:0B:00:07:09:0C"
             )
         )
     }
