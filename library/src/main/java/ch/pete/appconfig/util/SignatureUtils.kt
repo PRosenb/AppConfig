@@ -6,9 +6,11 @@ import android.content.pm.PackageManager
 import android.content.pm.Signature
 import android.os.Build
 import java.security.MessageDigest
-import kotlin.experimental.and
+import java.util.Locale
 
 internal object SignatureUtils {
+    private const val HEX_FF = 0xff
+
     /**
      * For Android before P the current signature is fetched only.
      */
@@ -42,19 +44,20 @@ internal object SignatureUtils {
         }
     }
 
-    // based on https://stackoverflow.com/a/2197650/115145
-    @Suppress("MagicNumber")
-    private fun toHexStringWithColons(bytes: ByteArray): String {
-        val hexArray = "0123456789ABCDEF".toCharArray()
-        val hexChars = CharArray(bytes.size * 3 - 1)
-        for (index in bytes.indices) {
-            val v = (bytes[index] and 0xF).toInt()
-            hexChars[index * 3] = hexArray[v / 16]
-            hexChars[index * 3 + 1] = hexArray[v % 16]
-            if (index < bytes.size - 1) {
-                hexChars[index * 3 + 2] = ':'
+    private fun toHexStringWithColons(hash: ByteArray): String {
+        val hexString = StringBuffer()
+        for (i in hash.indices) {
+            val hex = Integer.toHexString(HEX_FF and hash[i].toInt())
+            if (hex.length == 1) {
+                hexString.append('0')
             }
+            hexString.append(hex.toUpperCase(Locale.UK))
+            hexString.append(":")
         }
-        return String(hexChars)
+        if (hexString.isNotEmpty()) {
+            // remove last colon
+            hexString.setLength(hexString.length - 1)
+        }
+        return hexString.toString()
     }
 }
