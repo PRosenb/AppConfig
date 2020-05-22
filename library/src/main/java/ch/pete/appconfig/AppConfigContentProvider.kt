@@ -3,6 +3,7 @@ package ch.pete.appconfig
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.content.Context
+import android.content.SharedPreferences
 import android.database.Cursor
 import android.net.Uri
 import android.os.Binder
@@ -62,16 +63,29 @@ class AppConfigContentProvider : ContentProvider() {
                 if (value == null) {
                     editor.remove(key)
                 } else {
-                    when (val dataType = value.javaClass) {
-                        String::class.java -> editor.putString(key, value as String)
-                        Boolean::class.java -> editor.putBoolean(key, value as Boolean)
-                        else -> throw IllegalArgumentException("Unsupported data type $dataType")
-                    }
+                    applyValue(key, value, editor)
                 }
                 appliedKeysCount++
             }
         editor.apply()
         return appliedKeysCount
+    }
+
+    private fun applyValue(key: String, value: Any, editor: SharedPreferences.Editor) {
+        when (value) {
+            is Boolean -> editor.putBoolean(key, value)
+            is Byte -> editor.putInt(key, value.toInt())
+            is Float -> editor.putFloat(key, value)
+            is Int -> editor.putInt(key, value)
+            is Long -> editor.putLong(key, value)
+            is Short -> editor.putInt(key, value.toInt())
+            is String -> editor.putString(key, value)
+            is Double ->
+                throw IllegalArgumentException(
+                    "Double it not supported by SharedPreferences, use Short or String instead."
+                )
+            else -> throw IllegalArgumentException("Unsupported data type ${value::class.java}")
+        }
     }
 
     @Suppress("ThrowsCount")
