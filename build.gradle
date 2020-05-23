@@ -27,7 +27,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
+// left here to test staging builds
+//        maven {
+//            url "https://oss.sonatype.org/service/local/repositories/chpeteappconfig-1030/content/"
+//        }
     }
 }
 
