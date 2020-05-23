@@ -27,7 +27,7 @@ class AppConfigContentProvider : ContentProvider() {
         selection: String?, selectionArgs: Array<out String>?
     ): Int {
         context?.let { context ->
-            checkIfAllowed(context, values)
+            checkIfAllowed(context)
 
             var appliedKeysCount = 0
             values?.let { values ->
@@ -44,6 +44,40 @@ class AppConfigContentProvider : ContentProvider() {
 
             return appliedKeysCount
         } ?: throw IllegalArgumentException("context is null")
+    }
+
+    @Throws(SecurityException::class)
+    private fun checkIfAllowed(context: Context) {
+        val callingApplicationId = context.packageManager.getNameForUid(Binder.getCallingUid())
+        if (callingApplicationId == null) {
+            Log.e(TAG, "callingApplicationId is null")
+            throw SecurityException("Access denied")
+        }
+
+        val callerCurrentAndPastSignatures =
+            SignatureUtils.getCurrentAndPastSignatures(context, callingApplicationId)
+        val allowedApp =
+            AppConfig.authorizedApps.firstOrNull {
+                callingApplicationId == it.applicationId
+                        && callerCurrentAndPastSignatures.contains(it.signature)
+            }
+
+        if (allowedApp != null) {
+            Log.d(TAG, "Authorize access to $allowedApp")
+        } else {
+            Log.e(
+                TAG,
+                "Access denied\n" +
+                        "To allow add (Kotlin):\n" +
+                        "AppConfig.authorizedApps.add(\n" +
+                        "  AuthorizedApp(\n" +
+                        "    applicationId = \"$callingApplicationId\",\n" +
+                        "    signature = \"${callerCurrentAndPastSignatures[0]}\"\n" +
+                        "  )\n" +
+                        ")"
+            )
+            throw SecurityException("Access denied")
+        }
     }
 
     private fun storeValuesToSharedPreferences(context: Context, values: ContentValues): Int {
@@ -85,52 +119,6 @@ class AppConfigContentProvider : ContentProvider() {
                     "Double it not supported by SharedPreferences, use Short or String instead."
                 )
             else -> throw IllegalArgumentException("Unsupported data type ${value::class.java}")
-        }
-    }
-
-    @Throws(SecurityException::class)
-    private fun checkIfAllowed(context: Context, values: ContentValues?) {
-        val callingApplicationId = context.packageManager.getNameForUid(Binder.getCallingUid())
-        if (callingApplicationId == null) {
-            Log.e(TAG, "callingApplicationId is null")
-            throw SecurityException("Access denied")
-        }
-
-        val callerCurrentAndPastSignatures =
-            SignatureUtils.getCurrentAndPastSignatures(context, callingApplicationId)
-        val allowedApp =
-            AppConfig.authorizedApps.firstOrNull {
-                callingApplicationId == it.applicationId
-                        && callerCurrentAndPastSignatures.contains(it.signature)
-            }
-
-        val securityException = when {
-            allowedApp == null -> {
-                Log.e(
-                    TAG,
-                    "Access denied\n" +
-                            "To allow add (Kotlin):\n" +
-                            "AppConfig.authorizedApps.add(\n" +
-                            "  AuthorizedApp(\n" +
-                            "    applicationId = \"$callingApplicationId\",\n" +
-                            "    signature = \"${callerCurrentAndPastSignatures[0]}\"\n" +
-                            "  )\n" +
-                            ")"
-                )
-                SecurityException("Access denied")
-            }
-            values?.containsKey("TEST_ACCESS_DENIED") == true -> {
-                SecurityException("Access denied by TEST_ACCESS_DENIED key")
-            }
-            else -> {
-                null
-            }
-        }
-
-        if (securityException == null) {
-            Log.d(TAG, "Authorize access to $allowedApp")
-        } else {
-            throw securityException
         }
     }
 
