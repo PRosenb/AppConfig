@@ -8,7 +8,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.gitlab.arturbosch.detekt'
 
 ext {
-    def repo = Grgit.open()
+    // https://github.com/krzema12/fsynth/issues/53#issuecomment-622530487
+    def repo = Grgit.open(Collections.singletonMap("currentDir", project.rootDir))
     def head = repo.head()
     def tags = repo.tag.list().findAll { it.commit == head }
     if (tags.size() > 1) {
@@ -60,12 +61,12 @@ dependencies {
     implementation "androidx.preference:preference-ktx:1.1.1"
 
     testImplementation 'org.mockito:mockito-inline:3.2.4'
-    testImplementation 'org.mockito:mockito-junit-jupiter:2.23.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.3.3'
     testImplementation "com.nhaarman:mockito-kotlin:1.6.0"
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-    testImplementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.3.72'
-    testImplementation "org.assertj:assertj-core:3.10.0"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.4.10'
+    testImplementation "org.assertj:assertj-core:3.16.1"
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
