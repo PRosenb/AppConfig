@@ -44,11 +44,12 @@ internal class AppConfigContentProviderApplyValueTest {
     fun checkApplyValueWithDouble() {
         // given
         val testKey = "key"
-        val testValue: Double = 2.10003
+        val testValue = 2.10003
 
         // when
         val editorMock: SharedPreferences.Editor = mock()
         val exception = assertThrows(IllegalArgumentException::class.java) {
+            @Suppress("SwallowedException")
             try {
                 callApplyValue(testKey, testValue, editorMock)
             } catch (e: InvocationTargetException) {
@@ -57,7 +58,10 @@ internal class AppConfigContentProviderApplyValueTest {
         }
 
         // then
-        assertThat(exception.message).isEqualTo("Double it not supported by SharedPreferences, use Short or String instead.")
+        assertThat(exception.message).isEqualTo(
+            "Double it not supported by SharedPreferences," +
+                    " use Short or String instead."
+        )
     }
 
     @Test
@@ -146,7 +150,12 @@ internal class AppConfigContentProviderApplyValueTest {
         assertThat(exception.message).isEqualTo("Unsupported data type ${testValue::class.java}")
     }
 
-    private fun callApplyValue(key: String, value: Any, editor: SharedPreferences.Editor) {
+    private fun callApplyValue(
+        @Suppress("SameParameterValue") key: String,
+        value: Any,
+        editor: SharedPreferences.Editor
+    ) {
+        @Suppress("SwallowedException")
         try {
             val method: Method = AppConfigContentProvider::class.java.getDeclaredMethod(
                 "applyValue",
