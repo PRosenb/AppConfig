@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.content.pm.Signature
 import android.os.Build
 import java.security.MessageDigest
-import java.util.Locale
 
 internal object SignatureUtils {
     private const val HEX_FF = 0xff
@@ -17,10 +16,18 @@ internal object SignatureUtils {
     fun getCurrentAndPastSignatures(context: Context, packageName: String): List<String> {
         val signatures: Array<Signature> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val signingInfo =
-                context.packageManager.getPackageInfo(
-                    packageName,
-                    PackageManager.GET_SIGNING_CERTIFICATES
-                ).signingInfo
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    context.packageManager.getPackageInfo(
+                        packageName,
+                        PackageManager.PackageInfoFlags.of(PackageManager.GET_SIGNING_CERTIFICATES.toLong())
+                    ).signingInfo
+                } else {
+                    @Suppress("DEPRECATION")
+                    context.packageManager.getPackageInfo(
+                        packageName,
+                        PackageManager.GET_SIGNING_CERTIFICATES
+                    ).signingInfo
+                }
             if (signingInfo.hasMultipleSigners()) {
                 throw SecurityException("Permission denied. Apps signed with multiple signatures are not supported.")
             } else {
@@ -51,7 +58,7 @@ internal object SignatureUtils {
             if (hex.length == 1) {
                 hexString.append('0')
             }
-            hexString.append(hex.toUpperCase(Locale.UK))
+            hexString.append(hex.uppercase())
             hexString.append(":")
         }
         if (hexString.isNotEmpty()) {
